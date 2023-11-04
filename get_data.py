@@ -3,6 +3,7 @@ import copy
 import datetime
 import json
 import aiohttp
+import logging
 
 from betsModel import betsModel
 from database.functions import (
@@ -93,8 +94,10 @@ async def get_d2by_matches():
                         + datetime.timedelta(hours=1),
                     }
                     await add_bet(bet_data)
-
-        return leagues, res_matches
+            return leagues, res_matches
+    else:
+        logging.error("d2by not success")
+        return {}, {}
 
 
 async def get_fan_sport_leagues(sport: int, lgs: set = None):
@@ -117,7 +120,9 @@ async def get_fan_sport_leagues(sport: int, lgs: set = None):
             res = [league["LI"] for league in leagues]
 
         return res
-    return []
+    else:
+        logging.error("get_fan_sport_leagues not success")
+        return []
 
 
 def remove_id_key(d):
@@ -169,7 +174,9 @@ async def get_fan_sport_league_matches(league_id: int, sport_id: int, mats: dict
         )
 
         return res
-    return []
+    else:
+        logging.error("get_fan_sport_league_matches not success")
+        return []
 
 
 async def get_fan_sport_match_data(
@@ -229,3 +236,5 @@ async def get_fan_sport_match_data(
                     )
                 except:
                     pass
+    else:
+        logging.error("get_fan_sport_league_matches not success")

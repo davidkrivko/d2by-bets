@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import logging
 
 from database.functions import (
     delete_old_rows,
@@ -42,9 +43,6 @@ async def handle_matches_for_league(leag, matches, sport_id):
     await asyncio.gather(*tasks)
 
 
-# 1 - Football
-# 3 - Basketball
-# 40 - Cyber sport
 async def main():
     i = 0
 
@@ -78,20 +76,7 @@ async def main():
             i = 0
 
         stop = datetime.datetime.now()
-        print(stop - start)
-
-
-async def main2():
-    leagues, mats = await get_d2by_matches()
-
-    leagues = await get_fan_sport_leagues(40)
-    for league in leagues:
-        matches = await get_fan_sport_league_matches(league, 40, mats)
-
-        for match in matches:
-            bets = await get_fan_sport_match_data(
-                match["id"], match["d2by_id"], match["team_1"], match["team_2"]
-            )
+        logging.error(stop - start)
 
 
 if __name__ == "__main__":
