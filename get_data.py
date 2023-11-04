@@ -146,7 +146,9 @@ async def get_fan_sport_league_matches(league_id: int, sport_id: int, mats: dict
         for match in matches:
             for mat_id, mat in mats.items():
                 if match["O1"].lower() in mat["teams"] or match["O2"].lower() in mat["teams"]:
-                    logging.error(f"teams compare: {match['O1']}, {match['O1']}")
+                    logging.error(f"teams compare: {match['O1']}, {match['O1']}, "
+                                  f"start_time: {datetime.datetime.fromtimestamp(match['S'])}"
+                                  f"start_time_d2by: {mat['start_time']}")
                     if (mat["start_time"] - datetime.timedelta(minutes=30)) <= datetime.datetime.fromtimestamp(match["S"]) <= (mat["start_time"] + datetime.timedelta(minutes=30)):
                         res.append(
                             {
