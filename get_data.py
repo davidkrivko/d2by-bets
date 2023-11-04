@@ -143,7 +143,7 @@ async def get_fan_sport_league_matches(league_id: int, sport_id: int, mats: dict
                 "team_2": match["O2"].lower(),
                 "start_time": datetime.datetime.fromtimestamp(match["S"]),
                 "d2by_id": mat_id,
-                "sub_matches": [sub["CI"] for sub in match["SG"]]
+                "sub_matches": [sub["CI"] for sub in match("SG", None)]
                 if sport_id == 40
                 else [],
             }
