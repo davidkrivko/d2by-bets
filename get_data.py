@@ -2,6 +2,8 @@ import asyncio
 import copy
 import datetime
 import json
+import os
+
 import aiohttp
 import logging
 
@@ -14,6 +16,9 @@ from database.functions import (
     update_bet,
 )
 from database.tables import d2by_matches, fan_sport_matches
+
+
+TIME_DELTA = os.environ.get("TIME_DELTA", 0)
 
 
 async def get_d2by_matches():
@@ -44,7 +49,7 @@ async def get_d2by_matches():
             team_2 = match["teamB"]["title"].strip().lower()
             start_time = datetime.datetime.strptime(
                 match["minStartTime"], "%Y-%m-%dT%H:%M:%S.%fZ"
-            ) + datetime.timedelta(hours=1)
+            ) + datetime.timedelta(hours=int(TIME_DELTA))
 
             data = {
                 "team_1": team_1,
