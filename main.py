@@ -48,9 +48,8 @@ async def main():
 
     while True:
         if i == 0:
+            start = datetime.datetime.now()
             await delete_old_rows()
-
-        start = datetime.datetime.now()
 
         leagues, matches = await get_d2by_matches()
 
@@ -63,7 +62,7 @@ async def main():
             task = handle_league(3, leagues["Basketball"], matches)
             tasks.append(task)
 
-        # For the separate league with id 40
+        # Cyber sport
         task = handle_league(40, None, matches)
         tasks.append(task)
         await asyncio.gather(*tasks)
@@ -73,10 +72,9 @@ async def main():
 
         i += 1
         if i == 100:
+            stop = datetime.datetime.now()
             i = 0
-
-        stop = datetime.datetime.now()
-        logging.error(stop - start)
+            logging.error(f"100 cycles: {stop} - {start}")
 
 
 if __name__ == "__main__":

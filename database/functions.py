@@ -2,7 +2,6 @@ import datetime
 import os
 
 import aiohttp
-import sqlalchemy
 from sqlalchemy import Table, text, func
 from sqlalchemy.sql import select
 from sqlalchemy.exc import TimeoutError as SQLTimeoutError

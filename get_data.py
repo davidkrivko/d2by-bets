@@ -5,7 +5,6 @@ import json
 import os
 
 import aiohttp
-import logging
 
 from betsModel import betsModel
 from database.functions import (
@@ -100,7 +99,6 @@ async def get_d2by_matches():
                         await add_bet(bet_data)
         return leagues, res_matches
     else:
-        logging.error("d2by not success")
         return {}, {}
 
 
@@ -123,10 +121,8 @@ async def get_fan_sport_leagues(sport: int, lgs: set = None):
         else:
             res = [league["LI"] for league in leagues]
 
-        logging.error(f"leagues: {res}")
         return res
     else:
-        logging.error("get_fan_sport_leagues not success")
         return []
 
 
@@ -178,10 +174,8 @@ async def get_fan_sport_league_matches(league_id: int, sport_id: int, mats: dict
             ]
         )
 
-        logging.error(f"matches: {res}")
         return res
     else:
-        logging.error("get_fan_sport_league_matches not success")
         return []
 
 
@@ -235,7 +229,6 @@ async def get_fan_sport_match_data(
                 if fan_team_1 == d2by_bet[7] or fan_team_2 == d2by_bet[6]:
                     cfs[d2by_bet[0]] = (cfs[d2by_bet[0]][1], cfs[d2by_bet[0]][0])
 
-            logging.error(f"cfs: {cfs}")
             for bet, cf in cfs.items():
                 try:
                     await update_bet(
@@ -244,5 +237,4 @@ async def get_fan_sport_match_data(
                 except:
                     pass
     else:
-        logging.error("get_fan_sport_league_matches not success")
         return []
