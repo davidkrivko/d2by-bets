@@ -147,49 +147,29 @@ async def get_fan_sport_league_matches(league_id: int, sport_id: int, mats: dict
     if matches["Success"]:
         matches = matches["Value"]["G"]
 
-        res = []
-        for match in matches:
-            for mat_id, mat in mats.items():
-                if match["O1"].lower() in mat["teams"] or match["O2"].lower() in mat["teams"]:
-                    logging.error(f"teams compare: {match['O1']}, {match['O2']}, "
-                                  f"start_time: {datetime.datetime.fromtimestamp(match['S'])}"
-                                  f"start_time_d2by: {mat['start_time']}")
-                    if (mat["start_time"] - datetime.timedelta(minutes=30)) <= datetime.datetime.fromtimestamp(match["S"]) <= (mat["start_time"] + datetime.timedelta(minutes=30)):
-                        res.append(
-                            {
-                                "id": match["CI"],
-                                "team_1": match["O1"].lower(),
-                                "team_2": match["O2"].lower(),
-                                "start_time": datetime.datetime.fromtimestamp(match["S"]),
-                                "d2by_id": mat_id,
-                                "sub_matches": [sub["CI"] for sub in match("SG", None)]
-                                if sport_id == 40
-                                else [],
-                            }
-                        )
-        # res = [
-        #     {
-        #         "id": match["CI"],
-        #         "team_1": match["O1"].lower(),
-        #         "team_2": match["O2"].lower(),
-        #         "start_time": datetime.datetime.fromtimestamp(match["S"]),
-        #         "d2by_id": mat_id,
-        #         "sub_matches": [sub["CI"] for sub in match("SG", None)]
-        #         if sport_id == 40
-        #         else [],
-        #     }
-        #     for mat_id, mat in mats.items()
-        #     for match in matches
-        #     if (
-        #         match["O1"].lower() in mat["teams"]
-        #         or match["O2"].lower() in mat["teams"]
-        #     )
-        #     and (
-        #         (mat["start_time"] - datetime.timedelta(minutes=30))
-        #         <= datetime.datetime.fromtimestamp(match["S"])
-        #         <= (mat["start_time"] + datetime.timedelta(minutes=30))
-        #     )
-        # ]
+        res = [
+            {
+                "id": match["CI"],
+                "team_1": match["O1"].lower(),
+                "team_2": match["O2"].lower(),
+                "start_time": datetime.datetime.fromtimestamp(match["S"]),
+                "d2by_id": mat_id,
+                "sub_matches": [sub["CI"] for sub in match("SG", [])]
+                if sport_id == 40
+                else [],
+            }
+            for mat_id, mat in mats.items()
+            for match in matches
+            if (
+                match["O1"].lower() in mat["teams"]
+                or match["O2"].lower() in mat["teams"]
+            )
+            and (
+                (mat["start_time"] - datetime.timedelta(minutes=30))
+                <= datetime.datetime.fromtimestamp(match["S"])
+                <= (mat["start_time"] + datetime.timedelta(minutes=30))
+            )
+        ]
 
         insert_copy = copy.deepcopy(res)
         await asyncio.gather(
