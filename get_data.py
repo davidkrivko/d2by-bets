@@ -28,7 +28,6 @@ async def get_d2by_matches():
         ) as resp:
             response = await resp.text()
             matches = json.loads(response)
-
     if matches["meta"]["status"] == 200:
         matches = matches["data"]["resultData"]
 
@@ -50,55 +49,55 @@ async def get_d2by_matches():
             start_time = datetime.datetime.strptime(
                 match["minStartTime"], "%Y-%m-%dT%H:%M:%S.%fZ"
             ) + datetime.timedelta(hours=int(TIME_DELTA))
-
-            data = {
-                "team_1": team_1,
-                "team_2": team_2,
-                "start_time": start_time,
-                "game": game,
-                "league": lg,
-            }
-            match_id = await add_match_to_db(data, d2by_matches)
-
-            res_matches[match_id] = {
-                "teams": (team_1, team_2),
-                "start_time": start_time,
-                "game": game,
-            }
-
-            for bet in match["betType"]:
-                bet_data = {
-                    "type": bet["betTypeConfig"]["type"],
-                    "order": bet["betTypeConfig"]["order"]
-                    if not isinstance(bet["betTypeConfig"]["order"], dict)
-                    else 0,
-                    "description": bet["betTypeConfig"]["title"],
+            if match["match"]["isActive"]:
+                data = {
+                    "team_1": team_1,
+                    "team_2": team_2,
+                    "start_time": start_time,
+                    "game": game,
+                    "league": lg,
                 }
-                bet_type_id = await add_bet_type(bet_data)
+                match_id = await add_match_to_db(data, d2by_matches)
 
-                if bet["rateTeamA"] != 1 and bet["rateTeamB"] != 1:
-                    above_bets = bet["aboveBets"]
-                    if above_bets == "A":
-                        above_bets = 1
-                    elif above_bets == "B":
-                        above_bets = 2
-                    else:
-                        above_bets = None
+                res_matches[match_id] = {
+                    "teams": (team_1, team_2),
+                    "start_time": start_time,
+                    "game": game,
+                }
 
+                for bet in match["betType"]:
                     bet_data = {
-                        "isActive": bet["isActive"],
-                        "values": bet["values"],
-                        "d2by_1_win": bet["rateTeamA"],
-                        "d2by_2_win": bet["rateTeamB"],
-                        "match_id": match_id,
-                        "type_id": bet_type_id,
-                        "above_bets": above_bets,
-                        "start_time": datetime.datetime.strptime(
-                            bet["startTime"], "%Y-%m-%dT%H:%M:%S.%fZ"
-                        )
-                        + datetime.timedelta(hours=1),
+                        "type": bet["betTypeConfig"]["type"],
+                        "order": bet["betTypeConfig"]["order"]
+                        if not isinstance(bet["betTypeConfig"]["order"], dict)
+                        else 0,
+                        "description": bet["betTypeConfig"]["title"],
                     }
-                    await add_bet(bet_data)
+                    bet_type_id = await add_bet_type(bet_data)
+
+                    if bet["rateTeamA"] != 1 and bet["rateTeamB"] != 1:
+                        above_bets = bet["aboveBets"]
+                        if above_bets == "A":
+                            above_bets = 1
+                        elif above_bets == "B":
+                            above_bets = 2
+                        else:
+                            above_bets = None
+
+                        bet_data = {
+                            "isActive": bet["isActive"],
+                            "values": bet["values"],
+                            "d2by_1_win": bet["rateTeamA"],
+                            "d2by_2_win": bet["rateTeamB"],
+                            "match_id": match_id,
+                            "type_id": bet_type_id,
+                            "above_bets": above_bets,
+                            "start_time": datetime.datetime.strptime(
+                                bet["startTime"], "%Y-%m-%dT%H:%M:%S.%fZ"
+                            )
+                            + datetime.timedelta(hours=1),
+                        }
+                        await add_bet(bet_data)
         return leagues, res_matches
     else:
         logging.error("d2by not success")
@@ -154,7 +153,7 @@ async def get_fan_sport_league_matches(league_id: int, sport_id: int, mats: dict
                 "team_2": match["O2"].lower(),
                 "start_time": datetime.datetime.fromtimestamp(match["S"]),
                 "d2by_id": mat_id,
-                "sub_matches": [sub["CI"] for sub in match("SG", [])]
+                "sub_matches": [sub["CI"] for sub in match.get("SG", [])]
                 if sport_id == 40
                 else [],
             }
