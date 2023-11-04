@@ -142,6 +142,7 @@ async def get_fan_sport_league_matches(league_id: int, sport_id: int, mats: dict
     if matches["Success"]:
         matches = matches["Value"]["G"]
 
+        logging.error(f"matches: {matches}")
         res = [
             {
                 "id": match["CI"],
@@ -174,7 +175,6 @@ async def get_fan_sport_league_matches(league_id: int, sport_id: int, mats: dict
             ]
         )
 
-        logging.error(f"matches: {res}")
         return res
     else:
         logging.error("get_fan_sport_league_matches not success")
