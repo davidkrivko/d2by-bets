@@ -94,7 +94,7 @@ async def get_d2by_matches():
                         + datetime.timedelta(hours=1),
                     }
                     await add_bet(bet_data)
-            return leagues, res_matches
+        return leagues, res_matches
     else:
         logging.error("d2by not success")
         return {}, {}
@@ -238,3 +238,4 @@ async def get_fan_sport_match_data(
                     pass
     else:
         logging.error("get_fan_sport_league_matches not success")
+        return []
