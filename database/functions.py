@@ -26,9 +26,9 @@ async def send_telegram_message(message):
 async def update_match_active(data, match):
     if data["start_time"] != match[3]:
         async with async_session() as session:
-            update_stmt = d2by_matches.update().where(
-                d2by_matches.c.id == match[0]
-            ).values(data)
+            update_stmt = (
+                d2by_matches.update().where(d2by_matches.c.id == match[0]).values(data)
+            )
 
             try:
                 await session.execute(update_stmt)
@@ -46,15 +46,15 @@ async def add_match_to_db(data: dict, table: Table):
         match_statement = (
             table.select()
             .where(
-                (
-                    (table.c.team_1.in_(teams)) | (table.c.team_2.in_(teams))
-                ) & (
+                ((table.c.team_1.in_(teams)) | (table.c.team_2.in_(teams)))
+                & (
                     table.c.start_time.between(
                         data["start_time"] - datetime.timedelta(minutes=10),
                         data["start_time"] + datetime.timedelta(minutes=10),
                     )
                 )
-            ).limit(1)
+            )
+            .limit(1)
         )
         try:
             result_set = await session.execute(match_statement)
@@ -260,8 +260,7 @@ async def add_fake_row():
 async def add_bet_type(data: dict):
     async with async_session() as session:
         select_query = bets_type.select().where(
-            (bets_type.c.type == data["type"]) &
-            (bets_type.c.order == data["order"])
+            (bets_type.c.type == data["type"]) & (bets_type.c.order == data["order"])
         )
         try:
             result_set = await session.execute(select_query)
@@ -310,11 +309,15 @@ async def add_bet(data: dict):
             except:
                 return
     if data.get("d2by_1_win") and bet:
-        if data["d2by_1_win"] != bet[3] or data["d2by_2_win"] != bet[4]:
+        if (
+            round(data.get("d2by_1_win", float(bet[3])), 2) != float(bet[3])
+            or round(data.get("d2by_2_win", float(bet[4])), 2) != float(bet[4])
+        ) or (
+            round(data.get("fan_1_win", float(bet[5])), 2) != float(bet[5])
+            or round(data.get("fan_2_win", float(bet[6])), 2) != float(bet[6])
+        ):
             async with async_session() as session:
-                update_stmt = bets.update().where(
-                    bets.c.id == bet[0]
-                ).values(data)
+                update_stmt = bets.update().where(bets.c.id == bet[0]).values(data)
                 try:
                     await session.execute(update_stmt)
                     await session.commit()
@@ -325,26 +328,27 @@ async def add_bet(data: dict):
 async def get_bets_of_match(match_id: int, map_number):
     async with async_session() as session:
         type_join_stmt = bets.join(bets_type, bets.c.type_id == bets_type.c.id)
-        match_join_stmt = type_join_stmt.join(d2by_matches, bets.c.match_id == d2by_matches.c.id)
+        match_join_stmt = type_join_stmt.join(
+            d2by_matches, bets.c.match_id == d2by_matches.c.id
+        )
 
         # Create the select query
-        select_query = select(
-            *[
-                bets.c.id,
-                bets.c["values"].label('bet_values'),
-                bets_type.c.id.label("type_id"),
-                bets_type.c.fan_sport_bet_type,
-                bets_type.c.fan_sport_bet_type_football,
-                d2by_matches.c.id.label("match_id"),
-                d2by_matches.c.team_1,
-                d2by_matches.c.team_2,
-                bets.c.above_bets,
-            ]
-        ).select_from(
-            match_join_stmt
-        ).where(
-            (bets.c.match_id == match_id) &
-            (bets_type.c.map == map_number)
+        select_query = (
+            select(
+                *[
+                    bets.c.id,
+                    bets.c["values"].label("bet_values"),
+                    bets_type.c.id.label("type_id"),
+                    bets_type.c.fan_sport_bet_type,
+                    bets_type.c.fan_sport_bet_type_football,
+                    d2by_matches.c.id.label("match_id"),
+                    d2by_matches.c.team_1,
+                    d2by_matches.c.team_2,
+                    bets.c.above_bets,
+                ]
+            )
+            .select_from(match_join_stmt)
+            .where((bets.c.match_id == match_id) & (bets_type.c.map == map_number))
         )
 
         try:
@@ -360,9 +364,7 @@ async def update_bet(data: dict):
     bet_id = data.pop("id")
 
     async with async_session() as session:
-        update_stmt = bets.update().where(
-            bets.c.id == bet_id
-        ).values(data)
+        update_stmt = bets.update().where(bets.c.id == bet_id).values(data)
 
         try:
             await session.execute(update_stmt)
@@ -397,13 +399,13 @@ async def get_all_active_bets():
                 ]
             )
             .select_from(
-                bets
-                .join(bets_type, bets.c.type_id == bets_type.c.id)
-                .join(d2by_matches, bets.c.match_id == d2by_matches.c.id)
+                bets.join(bets_type, bets.c.type_id == bets_type.c.id).join(
+                    d2by_matches, bets.c.match_id == d2by_matches.c.id
+                )
             )
             .where(
-                (func.round(bets.c.d2by_1_win / bets.c.fan_1_win, 2) > 1.15) |
-                (func.round(bets.c.d2by_2_win / bets.c.fan_2_win, 2) > 1.15)
+                (func.round(bets.c.d2by_1_win / bets.c.fan_1_win, 2) > 1.15)
+                | (func.round(bets.c.d2by_2_win / bets.c.fan_2_win, 2) > 1.15)
             )
         )
 
@@ -432,14 +434,13 @@ async def get_all_active_bets():
 # 14. is_shown_5,
 # 15. is_shown_10,
 def escape_markdown_v2(string):
-    escape_chars = '_*[]()~`>#+-=|{}.!'
-    return ''.join(f'\\{char}' if char in escape_chars else char for char in string)
+    escape_chars = "_*[]()~`>#+-=|{}.!"
+    return "".join(f"\\{char}" if char in escape_chars else char for char in string)
 
 
 async def send_bets_to_telegram(bets_data: list):
     now = datetime.datetime.now()
     for bet in bets_data:
-
         if bet[6] > now:
             diff = bet[6] - now
 
