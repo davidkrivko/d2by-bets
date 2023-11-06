@@ -227,7 +227,10 @@ async def get_fan_sport_match_data(
                             cfs[d2by_bet[0]] += (bet["C"],)
 
                 if fan_team_1 == d2by_bet[7] or fan_team_2 == d2by_bet[6]:
-                    cfs[d2by_bet[0]] = (cfs[d2by_bet[0]][1], cfs[d2by_bet[0]][0])
+                    try:
+                        cfs[d2by_bet[0]] = (cfs[d2by_bet[0]][1], cfs[d2by_bet[0]][0])
+                    except:
+                        pass
 
             for bet, cf in cfs.items():
                 try:
