@@ -454,7 +454,8 @@ async def send_bets_to_telegram(bets_data: list):
 
                 message = (
                     f"    **{bet[11]}**    \n"
-                    f"    **{bet[7]}:** __bet[5]__    \n"
+                    f"       **{bet[9]} \\- {bet[10]}**"
+                    f"    **{bet[7]}:** __{bet[5]}__    \n"
                     f"__D2BY__: **{bet[1]}** \\- **{bet[2]}**\n"
                     f"__FanSport__: {bet[3]} \\- {bet[4]}\n"
                     f"Bet active until {bet[6]}\n"
@@ -467,7 +468,8 @@ async def send_bets_to_telegram(bets_data: list):
 
                 message = (
                     f"    **{bet[11]}**    \n"
-                    f"    **{bet[7]}:** __bet[5]__    \n"
+                    f"       **{bet[9]} \\- {bet[10]}**\n"
+                    f"    **{bet[7]}:** __{bet[5]}__    \n"
                     f"__D2BY__: **{bet[1]}** \\- **{bet[2]}**\n"
                     f"__FanSport__: {bet[3]} \\- {bet[4]}\n"
                     f"Bet active until {bet[6]}\n"
@@ -480,7 +482,8 @@ async def send_bets_to_telegram(bets_data: list):
 
                 message = (
                     f"    **{bet[11]}**    \n"
-                    f"    **{bet[7]}:** __bet[5]__    \n"
+                    f"       **{bet[9]} \\- {bet[10]}**"
+                    f"    **{bet[7]}:** __{bet[5]}__    \n"
                     f"__D2BY__: **{bet[1]}** \\- **{bet[2]}**\n"
                     f"__FanSport__: {bet[3]} \\- {bet[4]}\n"
                     f"Bet active until {bet[6]}\n"
