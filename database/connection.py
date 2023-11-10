@@ -1,4 +1,3 @@
-from dotenv import load_dotenv
 from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
@@ -13,8 +12,6 @@ from config import (
     DB_PORT,
     DB_NAME,
 )
-
-load_dotenv()
 
 
 DB_STRING = f"postgresql+asyncpg://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
