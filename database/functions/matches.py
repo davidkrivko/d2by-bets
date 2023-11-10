@@ -1,0 +1,69 @@
+from sqlalchemy import Table, text
+from sqlalchemy.exc import TimeoutError as SQLTimeoutError
+
+from database.connection import async_session
+from database.tables import d2by_matches, bets
+
+
+async def add_match_to_db(data: dict, table: Table):
+    async with async_session() as session:
+        match_statement = (
+            table.select()
+            .where(
+                table.c.team_1 == data["team_1"],
+                table.c.team_2 == data["team_2"]
+            ).limit(1)
+        )
+        try:
+            result_set = await session.execute(match_statement)
+
+            match = result_set.fetchone()
+        except SQLTimeoutError:
+            return
+        except:
+            match = None
+
+    if match is None:
+        async with async_session() as session:
+            insert_stmt = table.insert().values(
+                data,
+            )
+            try:
+                res = await session.execute(insert_stmt)
+                await session.commit()
+
+                return res.inserted_primary_key[0]
+            except SQLTimeoutError:
+                return
+    else:
+        async with async_session() as session:
+            update_stmt = table.update().where(table.c.id == match[0]).values(data)
+
+            try:
+                await session.execute(update_stmt)
+                await session.commit()
+
+                return match[0]
+            except SQLTimeoutError:
+                return
+
+
+async def update_is_shown_field(bet_id: int, data: dict):
+    async with async_session() as session:
+        update_stmt = bets.update().where(bets.c.id == bet_id).values(data)
+        try:
+            await session.execute(update_stmt)
+            await session.commit()
+        except SQLTimeoutError:
+            return
+        except:
+            return
+
+
+async def delete_old_rows():
+    async with async_session() as session:
+        match_statement = d2by_matches.delete().where(
+            text("(now() - d2by_matches.start_time) > INTERVAL '6 hours'")
+        )
+        await session.execute(match_statement)
+        await session.commit()
