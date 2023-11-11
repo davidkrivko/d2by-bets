@@ -13,7 +13,7 @@ DB_PORT = os.environ.get("DB_PORT")
 
 TIME_DELTA = os.environ.get("TIME_DELTA", 0)
 THRESHOLD = 60
-WORD_BLACK_LIST = ["vfl", "gaming", "esports", "ac", "fc", "esport", "team"]
+WORD_BLACK_LIST = ["vfb", "vfl", "gaming", "esports", "ac", "fc", "esport", "team"]
 
 TELEGRAM_BOT = os.environ.get("TELEGRAM_BOT")
 CHAT_ID = os.environ.get("CHAT_ID")

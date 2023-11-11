@@ -170,7 +170,7 @@ async def collect_fan_sport_match_data(
                             cfs[d2by_bet[0]] = (bet["C"],)
                         else:
                             cfs[d2by_bet[0]] += (bet["C"],)
-                            if "Total" in d2by_bet[9]:
+                            if "Total" in bet_model["GN"] and "Handicap" not in bet_model["GN"]:
                                 await update_bet(
                                     {
                                         "id": d2by_bet[0],
@@ -179,7 +179,7 @@ async def collect_fan_sport_match_data(
                                 )
                                 cfs.pop(d2by_bet[0])
 
-                if fan_team_1 == d2by_bet[7] or fan_team_2 == d2by_bet[6]:
+                if are_teams_similar(fan_team_1, d2by_bet[7]) or are_teams_similar(fan_team_2, d2by_bet[6]):
                     try:
                         cfs[d2by_bet[0]] = (cfs[d2by_bet[0]][1], cfs[d2by_bet[0]][0])
                     except:

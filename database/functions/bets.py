@@ -98,7 +98,6 @@ async def get_bets_of_match(match_id: int, map_number):
                     d2by_matches.c.team_1,
                     d2by_matches.c.team_2,
                     bets.c.above_bets,
-                    bets_type.c.description,
                 ]
             )
             .select_from(match_join_stmt)
