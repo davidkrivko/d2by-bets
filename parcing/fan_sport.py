@@ -170,7 +170,7 @@ async def collect_fan_sport_match_data(
                             cfs[d2by_bet[0]] = (bet["C"],)
                         else:
                             cfs[d2by_bet[0]] += (bet["C"],)
-                            if bet_model["GN"] == "Total Maps" or bet_model["GN"] == "Total":
+                            if "Total" in d2by_bet[9]:
                                 await update_bet(
                                     {
                                         "id": d2by_bet[0],
