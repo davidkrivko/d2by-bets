@@ -32,7 +32,6 @@ fan_sport_matches = Table(
     Column("team_2", String),
     Column("start_time", TIMESTAMP),
     Column("d2by_id", ForeignKey(d2by_matches.c.id, ondelete="CASCADE"), unique=True),
-    Column("fan_id", Integer, nullable=True),
     extend_existing=True,
 )
 
@@ -70,17 +69,6 @@ bets = Table(
     Column("is_shown_2", Boolean, default=False),
     extend_existing=True,
 )
-
-
-# statistic = Table(
-#     "statistic",
-#     meta,
-#     Column("id", Integer, primary_key=True, autoincrement=True),
-#     Column("team_1", String),
-#     Column("team_2", String),
-#     Column("type_id", ForeignKey(bets_type.c.id, ondelete="CASCADE")),
-#
-# )
 
 
 async def create_tables():
