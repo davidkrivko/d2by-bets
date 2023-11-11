@@ -153,6 +153,7 @@ async def get_all_active_bets():
                     bets.c.is_shown_2,
                     bets.c.is_shown_5,
                     bets.c.is_shown_10,
+                    bets.c.above_bets,
                 ]
             )
             .select_from(

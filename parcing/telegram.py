@@ -25,7 +25,7 @@ def escape_markdown_v2(string):
 # 3. d2by_2_win,
 # 4. fan_1_win,
 # 5. fan_2_win,
-# 6. "values"].label("bet_values"),
+# 6. "values"
 # 7. start_time,
 # 8. description,
 # 9. id.label("match_id"),
@@ -35,26 +35,46 @@ def escape_markdown_v2(string):
 # 13. is_shown_2,
 # 14. is_shown_5,
 # 15. is_shown_10,
+# 16. above_bets,
+def bet_message(bet):
+    if 'Handicap' in bet[7]:
+        sub_str = "negative "
+        if bet[15] is not None and bet[15] == '1':
+            sub_str += f"{bet[5]} for team {bet[9]}"
+        else:
+            sub_str += f"{bet[5]} for team {bet[10]}"
+    else:
+        sub_str = f"{bet[5]}"
+
+    message = (
+        f"       **{bet[11]}**    \n"
+        f"**{bet[9]} \\- {bet[10]}**\n"
+        f"**{bet[7]}:** {sub_str}\n"
+        f"__D2BY__: **{bet[1]}** \\- **{bet[2]}**\n"
+        f"__FanSport__: {bet[3]} \\- {bet[4]}\n"
+        f"Bet active until {bet[6]}\n"
+    )
+    return message
+
+
 async def send_bets_to_telegram(bets_data: list):
     now = datetime.datetime.now()
     for bet in bets_data:
         if bet[6] > now:
             diff = bet[6] - now
 
-            if (
-                    (diff < datetime.timedelta(minutes=2) and bet[12] is False) |
-                    (diff < datetime.timedelta(minutes=5) and bet[13] is False) |
-                    (diff < datetime.timedelta(minutes=10) and bet[14] is False)
-            ):
+            if diff < datetime.timedelta(minutes=2) and bet[12] is False:
                 await update_is_shown_field(bet[0], {"is_shown_2": True})
                 bet = [escape_markdown_v2(str(i)) for i in bet]
-
-                message = (
-                    f"    **{bet[11]}**    \n"
-                    f"       **{bet[9]} \\- {bet[10]}**\n"
-                    f"    **{bet[7]}:** __{bet[5]}__    \n"
-                    f"__D2BY__: **{bet[1]}** \\- **{bet[2]}**\n"
-                    f"__FanSport__: {bet[3]} \\- {bet[4]}\n"
-                    f"Bet active until {bet[6]}\n"
-                )
+                message = bet_message(bet)
+                await send_telegram_message(message)
+            elif diff < datetime.timedelta(minutes=5) and bet[13] is False:
+                await update_is_shown_field(bet[0], {"is_shown_5": True})
+                bet = [escape_markdown_v2(str(i)) for i in bet]
+                message = bet_message(bet)
+                await send_telegram_message(message)
+            elif diff < datetime.timedelta(minutes=10) and bet[14] is False:
+                await update_is_shown_field(bet[0], {"is_shown_10": True})
+                bet = [escape_markdown_v2(str(i)) for i in bet]
+                message = bet_message(bet)
                 await send_telegram_message(message)

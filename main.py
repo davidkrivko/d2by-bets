@@ -1,7 +1,6 @@
 import asyncio
-from script import main
 
-from database.tables import create_tables
+from script import main
 
 
 if __name__ == "__main__":

@@ -73,7 +73,7 @@ async def main():
         await send_bets_to_telegram(bets)
 
         i += 1
-        if i == 100:
+        if i == 10:
             stop = datetime.datetime.now()
             i = 0
             logging.error(f"100 cycles: {stop - start}")
