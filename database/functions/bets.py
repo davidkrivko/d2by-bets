@@ -57,7 +57,7 @@ async def add_bet(data: dict):
                 await session.commit()
             except:
                 return
-    if data.get("d2by_1_win") and bet:
+    if bet:
         if (
             round(data.get("d2by_1_win", 1 if bet[3] is None else float(bet[3])), 2)
             != float(1 if bet[3] is None else float(bet[3]))
@@ -68,6 +68,8 @@ async def add_bet(data: dict):
             != float(1 if bet[4] is None else float(bet[4]))
             or round(data.get("fan_2_win", 1 if bet[5] is None else float(bet[5])), 2)
             != float(1 if bet[5] is None else float(bet[5]))
+        ) or (
+            data.get("isActive") != bet[1]
         ):
             async with async_session() as session:
                 update_stmt = bets.update().where(bets.c.id == bet[0]).values(data)
@@ -134,7 +136,6 @@ async def update_bet(data: dict):
 
 async def get_all_active_bets():
     async with async_session() as session:
-        # Create the select query
         select_query = (
             select(
                 *[
