@@ -58,7 +58,7 @@ def bet_message(bet):
 
 
 async def send_bets_to_telegram(bets_data: list):
-    now = datetime.datetime.now()
+    now = datetime.datetime.now() + datetime.timedelta(hours=1)
     for bet in bets_data:
         if bet[6] > now:
             diff = bet[6] - now

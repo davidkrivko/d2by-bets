@@ -104,9 +104,9 @@ async def get_bets_of_match(match_id: int, map_number):
             )
             .select_from(match_join_stmt)
             .where(
-                (bets.c.match_id == match_id) &
-                (bets_type.c.map == map_number) &
-                (bets.c.isActive == True)
+                (bets.c.match_id == match_id)
+                & (bets_type.c.map == map_number)
+                & (bets.c.isActive == True)
             )
         )
 
@@ -163,8 +163,11 @@ async def get_all_active_bets():
                 )
             )
             .where(
-                (func.round(bets.c.d2by_1_win / bets.c.fan_1_win, 2) > 1.15)
-                | (func.round(bets.c.d2by_2_win / bets.c.fan_2_win, 2) > 1.15)
+                (
+                    (func.round(bets.c.d2by_1_win / bets.c.fan_1_win, 2) > 1.15)
+                    | (func.round(bets.c.d2by_2_win / bets.c.fan_2_win, 2) > 1.15)
+                )
+                & (bets.c.isActive == True)
             )
         )
 
