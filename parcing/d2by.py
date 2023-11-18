@@ -38,6 +38,12 @@ async def get_d2by_matches():
 
             team_1 = update_team_name(match["teamA"]["title"])
             team_2 = update_team_name(match["teamB"]["title"])
+
+            if team_1 == "bb":
+                team_1 = "betboom"
+            if team_2 == "bb":
+                team_2 = "betboom"
+
             start_time = datetime.datetime.strptime(
                 match["minStartTime"], "%Y-%m-%dT%H:%M:%S.%fZ"
             ) + datetime.timedelta(hours=D2BY_TIME_DELTA)

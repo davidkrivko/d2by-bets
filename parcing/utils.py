@@ -31,6 +31,6 @@ def is_reversed(d2by_team_1, d2by_team_2, fan_team_1, fan_team_2):
     not_same = fuzz.ratio(d2by_team_1, fan_team_2) + fuzz.ratio(d2by_team_2, fan_team_1)
 
     if same > not_same:
-        return True
-    else:
         return False
+    else:
+        return True

@@ -140,8 +140,8 @@ async def collect_fan_sport_match_data(
         n_map = value.get("P", None)
 
         if bets:
-            fan_team_1 = value["O1"]
-            fan_team_2 = value["O2"]
+            fan_team_1 = update_team_name(value["O1"])
+            fan_team_2 = update_team_name(value["O2"])
 
             d2by_bets = await get_bets_of_match(match_id, n_map)
 
@@ -180,6 +180,19 @@ async def collect_fan_sport_match_data(
                                         cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{team}_win": bet["C"]}
                                     else:
                                         cfs[d2by_bet[0]].update({f"fan_{team}_win": bet["C"]})
+                            elif "Frags, Race To" in bet_model["GN"]:
+                                if str(value) in d2by_bet[9]:
+                                    b_data = cfs.get(d2by_bet[0], None)
+                                    if not b_data:
+                                        if "W2" in bet_model["N"]:
+                                            cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_1_win": bet["C"]}
+                                        else:
+                                            cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_2_win": bet["C"]}
+                                    else:
+                                        if "W2" in bet_model["N"]:
+                                            cfs[d2by_bet[0]].update({f"fan_1_win": bet["C"]})
+                                        else:
+                                            cfs[d2by_bet[0]].update({f"fan_2_win": bet["C"]})
                             elif "Total" in bet_model["GN"] and "Handicap" not in bet_model["GN"]:
                                 pass
                             else:
@@ -205,12 +218,23 @@ async def collect_fan_sport_match_data(
                                     else:
                                         cfs[d2by_bet[0]].update({f"fan_{d2by_bet[8]}_win": bet["C"]})
                                 elif value == d2by_bet[1] and str(d2by_bet[8]) not in bet_model["N"]:
-                                    team = 1 if d2by_bet[8] == 2 else 2
-
                                     if not b_data:
-                                        cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{team}_win": bet["C"]}
+                                        cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{d2by_bet[8]}_win": bet["C"]}
                                     else:
-                                        cfs[d2by_bet[0]].update({f"fan_{team}_win": bet["C"]})
+                                        cfs[d2by_bet[0]].update({f"fan_{d2by_bet[8]}_win": bet["C"]})
+                            elif "Frags, Race To" in bet_model["GN"]:
+                                if str(value) in d2by_bet[9]:
+                                    b_data = cfs.get(d2by_bet[0], None)
+                                    if not b_data:
+                                        if "W2" in bet_model["N"]:
+                                            cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_2_win": bet["C"]}
+                                        else:
+                                            cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_1_win": bet["C"]}
+                                    else:
+                                        if "W2" in bet_model["N"]:
+                                            cfs[d2by_bet[0]].update({f"fan_2_win": bet["C"]})
+                                        else:
+                                            cfs[d2by_bet[0]].update({f"fan_1_win": bet["C"]})
                             elif "Total" in bet_model["GN"] and "Handicap" not in bet_model["GN"]:
                                 pass
                             else:
