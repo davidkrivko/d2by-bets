@@ -2,7 +2,7 @@ import datetime
 import json
 import aiohttp
 
-from config import TIME_DELTA
+from config import D2BY_TIME_DELTA
 from database.functions.bets import (
     add_bet_type,
     add_bet,
@@ -40,7 +40,7 @@ async def get_d2by_matches():
             team_2 = update_team_name(match["teamB"]["title"])
             start_time = datetime.datetime.strptime(
                 match["minStartTime"], "%Y-%m-%dT%H:%M:%S.%fZ"
-            ) + datetime.timedelta(hours=int(TIME_DELTA))
+            ) + datetime.timedelta(hours=D2BY_TIME_DELTA)
             if match["match"]["isActive"]:
                 data = {
                     "team_1": team_1,
