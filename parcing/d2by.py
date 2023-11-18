@@ -10,7 +10,6 @@ from database.functions.bets import (
 from database.functions.matches import add_match_to_db
 
 from database.tables import d2by_matches
-from login.api import get_token
 from parcing.utils import update_team_name
 
 
