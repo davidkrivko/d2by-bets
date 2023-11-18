@@ -11,7 +11,9 @@ DB_HOST = os.environ.get("DB_HOST")
 DB_PORT = os.environ.get("DB_PORT")
 
 
-TIME_DELTA = os.environ.get("TIME_DELTA", 0)
+D2BY_TIME_DELTA = os.environ.get("D2BY_TIME_DELTA", 0)
+SENDING_MESSAGES_DELTA = os.environ.get("SENDING_MESSAGES_DELTA", 0)
+
 THRESHOLD = 60
 WORD_BLACK_LIST = ["vfb", "vfl", "gaming", "esports", "ac", "fc", "esport", "team"]
 

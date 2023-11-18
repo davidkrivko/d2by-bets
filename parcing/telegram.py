@@ -1,7 +1,7 @@
 import datetime
 import aiohttp
 
-from config import TELEGRAM_BOT, CHAT_ID
+from config import TELEGRAM_BOT, CHAT_ID, SENDING_MESSAGES_DELTA
 from database.functions.matches import update_is_shown_field
 
 
@@ -58,7 +58,7 @@ def bet_message(bet):
 
 
 async def send_bets_to_telegram(bets_data: list):
-    now = datetime.datetime.now() + datetime.timedelta(hours=1)
+    now = datetime.datetime.now() + datetime.timedelta(hours=SENDING_MESSAGES_DELTA)
     for bet in bets_data:
         if bet[6] > now:
             diff = bet[6] - now

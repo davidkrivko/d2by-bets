@@ -24,3 +24,13 @@ def remove_id_key(d):
 def are_teams_similar(team1, team2):
     similarity_score = fuzz.ratio(team1, team2)
     return similarity_score >= THRESHOLD
+
+
+def is_reversed(d2by_team_1, d2by_team_2, fan_team_1, fan_team_2):
+    same = fuzz.ratio(d2by_team_1, fan_team_1) + fuzz.ratio(d2by_team_2, fan_team_2)
+    not_same = fuzz.ratio(d2by_team_1, fan_team_2) + fuzz.ratio(d2by_team_2, fan_team_1)
+
+    if same > not_same:
+        return True
+    else:
+        return False

@@ -17,6 +17,7 @@ from parcing.utils import (
     update_team_name,
     are_teams_similar,
     remove_id_key,
+    is_reversed,
 )
 
 
@@ -147,9 +148,12 @@ async def collect_fan_sport_match_data(
             bets = value["E"]
 
             if d2by_bets:
-                is_reverse = are_teams_similar(
-                    fan_team_1, d2by_bets[0][7]
-                ) or are_teams_similar(fan_team_2, d2by_bets[0][6])
+                is_reverse = is_reversed(
+                    d2by_bets[0][6],
+                    d2by_bets[0][7],
+                    fan_team_1,
+                    fan_team_2,
+                )
             else:
                 return
 
@@ -164,18 +168,18 @@ async def collect_fan_sport_match_data(
 
                             if "Handicap" in bet_model["GN"]:
                                 b_data = cfs.get(d2by_bet[0], None)
-                                if str(d2by_bet[8]) in bet_model["N"] and value == d2by_bet[1]:
-                                    team = 1 if d2by_bet[8] == 2 else 2
+                                team = 1 if d2by_bet[8] == 2 else 2
 
+                                if str(d2by_bet[8]) in bet_model["N"] and value == d2by_bet[1]:
                                     if not b_data:
                                         cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{team}_win": bet["C"]}
                                     else:
                                         cfs[d2by_bet[0]].update({f"fan_{team}_win": bet["C"]})
                                 elif str(d2by_bet[8]) not in bet_model["N"] and value == -1 * d2by_bet[1]:
                                     if not b_data:
-                                        cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{d2by_bet[8]}_win": bet["C"]}
+                                        cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{team}_win": bet["C"]}
                                     else:
-                                        cfs[d2by_bet[0]].update({f"fan_{d2by_bet[8]}_win": bet["C"]})
+                                        cfs[d2by_bet[0]].update({f"fan_{team}_win": bet["C"]})
                             elif "Total" in bet_model["GN"] and "Handicap" not in bet_model["GN"]:
                                 pass
                             else:
@@ -237,10 +241,7 @@ async def collect_fan_sport_match_data(
                                 else:
                                     cfs[d2by_bet[0]].update({f"fan_2_win": bet["C"]})
 
-            for cf in cfs.values():
-                try:
-                    await update_bet(cf)
-                except:
-                    pass
+            tasks = [update_bet(cf) for cf in cfs.values()]
+            await asyncio.gather(*tasks)
     else:
         return []
