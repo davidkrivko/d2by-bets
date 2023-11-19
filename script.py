@@ -31,7 +31,7 @@ async def handle_matches_for_league(leag, matches, sport_id, match_type):
     if mats:
         tasks = [
             collect_fan_sport_match_data(
-                sub_mat, mat["d2by_id"], match_type
+                sub_mat, mat["d2by_id"], match_type, sport_id
             )
             for mat in mats
             for sub_mat in (mat["sub_matches"] + [mat["id"]])

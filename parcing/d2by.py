@@ -97,10 +97,13 @@ async def get_d2by_matches():
                             "match_id": match_id,
                             "type_id": bet_type_id,
                             "above_bets": above_bets,
+                            "amount_1_win": bet["totalAmountTeamA"],
+                            "amount_2_win": bet["totalAmountTeamB"],
                             "start_time": datetime.datetime.strptime(
                                 bet["startTime"], "%Y-%m-%dT%H:%M:%S.%fZ"
-                            )
-                            + datetime.timedelta(hours=1),
+                            ) + datetime.timedelta(hours=D2BY_TIME_DELTA),
+                            "d2by_url": f"https://d2by.com/match/{match['match']['shortId']}-{bet['shortId']}",
+                            "fan_url": f"",
                         }
                         await add_bet(bet_data)
         return leagues, res_matches

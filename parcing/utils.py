@@ -34,3 +34,24 @@ def is_reversed(d2by_team_1, d2by_team_2, fan_team_1, fan_team_2):
         return False
     else:
         return True
+
+
+def create_fan_sport_url(match_type, sport_id, league_id, league_name, match_id, team_1, team_2):
+    if sport_id == 40:
+        sport = "esports"
+    elif sport_id == 3:
+        sport = "basketball"
+    elif sport_id == 1:
+        sport = "football"
+    else:
+        return
+
+    league_input = str(league_id) + " " + league_name
+    league = re.sub(r'[^a-zA-Z0-9]+', '-', league_input).lower()
+
+    match_input = str(match_id) + " " + team_1 + " " + team_2
+    match = re.sub(r'[^a-zA-Z0-9]+', '-', match_input).lower()
+
+    match_type = "line" if match_type == "LineFeed" else "live"
+
+    return f"https://fan-sport.com/{match_type}/{sport}/{league}/{match}"

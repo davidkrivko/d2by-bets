@@ -16,9 +16,10 @@ async def send_telegram_message(message):
 
 
 def escape_markdown_v2(string):
-    escape_chars = "_*[]()~`>#+-=|{}.!"
-    return "".join(f"\\{char}" if char in escape_chars else char for char in string)
-
+    if "https" not in string:
+        escape_chars = "_*[]()~`>#+-=|{}.!"
+        return "".join(f"\\{char}" if char in escape_chars else char for char in string)
+    return string
 
 # 1. id,
 # 2. d2by_1_win,
@@ -36,6 +37,10 @@ def escape_markdown_v2(string):
 # 14. is_shown_5,
 # 15. is_shown_10,
 # 16. above_bets,
+# 17. bets.c.amount_1_win,
+# 18. bets.c.amount_2_win,
+# 19. bets.c.d2by_url,
+# 20.  bets.c.fan_url,
 def bet_message(bet):
     if 'Handicap' in bet[7]:
         sub_str = "negative "
@@ -50,8 +55,8 @@ def bet_message(bet):
         f"       **{bet[11]}**    \n"
         f"**{bet[9]} \\- {bet[10]}**\n"
         f"**{bet[7]}:** {sub_str}\n"
-        f"__D2BY__: **{bet[1]}** \\- **{bet[2]}**\n"
-        f"__FanSport__: {bet[3]} \\- {bet[4]}\n"
+        f"[D2BY]({bet[18]}): **{bet[1]} \\({bet[16]} $\\)**\\- **{bet[2]} \\({bet[17]} $\\)**\n"
+        f"[FanSport]({bet[19]}): {bet[3]} \\- {bet[4]}\n"
         f"Bet active until {bet[6]}\n"
     )
     return message

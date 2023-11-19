@@ -162,6 +162,10 @@ async def get_all_active_bets():
                     bets.c.is_shown_5,
                     bets.c.is_shown_10,
                     bets.c.above_bets,
+                    bets.c.amount_1_win,
+                    bets.c.amount_2_win,
+                    bets.c.d2by_url,
+                    bets.c.fan_url,
                 ]
             )
             .select_from(
