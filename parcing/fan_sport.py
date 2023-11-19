@@ -44,7 +44,7 @@ async def get_fan_sport_league_matches(league_id, match_type):
 async def get_fan_sport_match_data(sub_match_id, match_type):
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            f"https://fan-sport.com/{match_type}/GetGameZip?id={sub_match_id}"
+            f"https://fan-sport.com/{match_type}/GetGameZip?id={sub_match_id}&lng=en"
         ) as resp:
             response = await resp.text()
             data = json.loads(response)
@@ -165,23 +165,23 @@ async def collect_fan_sport_match_data(
                     if bet_model["GN"] == d2by_bet[3] or bet_model["GN"] == d2by_bet[4]:
                         if is_reverse:
                             value = bet.get("P", None)
-
                             if "Handicap" in bet_model["GN"]:
                                 b_data = cfs.get(d2by_bet[0], None)
-                                team = 1 if d2by_bet[8] == 2 else 2
 
                                 if str(d2by_bet[8]) in bet_model["N"] and value == d2by_bet[1]:
+                                    team = 1 if d2by_bet[8] == 2 else 2
+
                                     if not b_data:
                                         cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{team}_win": bet["C"]}
                                     else:
                                         cfs[d2by_bet[0]].update({f"fan_{team}_win": bet["C"]})
                                 elif str(d2by_bet[8]) not in bet_model["N"] and value == -1 * d2by_bet[1]:
                                     if not b_data:
-                                        cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{team}_win": bet["C"]}
+                                        cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{d2by_bet[8]}_win": bet["C"]}
                                     else:
-                                        cfs[d2by_bet[0]].update({f"fan_{team}_win": bet["C"]})
+                                        cfs[d2by_bet[0]].update({f"fan_{d2by_bet[8]}_win": bet["C"]})
                             elif "Frags, Race To" in bet_model["GN"]:
-                                if str(value) in d2by_bet[9]:
+                                if str(int(value)) in d2by_bet[9]:
                                     b_data = cfs.get(d2by_bet[0], None)
                                     if not b_data:
                                         if "W2" in bet_model["N"]:
@@ -218,12 +218,14 @@ async def collect_fan_sport_match_data(
                                     else:
                                         cfs[d2by_bet[0]].update({f"fan_{d2by_bet[8]}_win": bet["C"]})
                                 elif value == d2by_bet[1] and str(d2by_bet[8]) not in bet_model["N"]:
+                                    team = 1 if d2by_bet[8] == 2 else 2
+
                                     if not b_data:
-                                        cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{d2by_bet[8]}_win": bet["C"]}
+                                        cfs[d2by_bet[0]] = {"id": d2by_bet[0], f"fan_{team}_win": bet["C"]}
                                     else:
-                                        cfs[d2by_bet[0]].update({f"fan_{d2by_bet[8]}_win": bet["C"]})
+                                        cfs[d2by_bet[0]].update({f"fan_{team}_win": bet["C"]})
                             elif "Frags, Race To" in bet_model["GN"]:
-                                if str(value) in d2by_bet[9]:
+                                if str(int(value)) in d2by_bet[9]:
                                     b_data = cfs.get(d2by_bet[0], None)
                                     if not b_data:
                                         if "W2" in bet_model["N"]:
