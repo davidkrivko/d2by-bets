@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-from selenium import webdriver
 from simplegmail import Gmail
 
 from login.api import get_token

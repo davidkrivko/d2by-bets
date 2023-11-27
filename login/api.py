@@ -1,7 +1,9 @@
 import datetime
 import logging
+import os
 from telnetlib import EC
 
+from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
@@ -11,12 +13,18 @@ from selenium.webdriver.support import expected_conditions as EC
 from login.emails import get_verification_code
 
 
+load_dotenv()
+
+
 CHROME_OPTIONS = webdriver.ChromeOptions()
+
+
 CHROME_OPTIONS.add_argument("--window-size=1300,800")
-CHROME_OPTIONS.add_argument("--disable-gpu")
-CHROME_OPTIONS.add_argument("--headless")
-CHROME_OPTIONS.add_argument("--no-sandbox")
-CHROME_OPTIONS.add_argument("--disable-dev-shm-usage")
+if os.environ.get("CHROME_OPTIONS") == "true":
+    CHROME_OPTIONS.add_argument("--disable-gpu")
+    CHROME_OPTIONS.add_argument("--headless")
+    CHROME_OPTIONS.add_argument("--no-sandbox")
+    CHROME_OPTIONS.add_argument("--disable-dev-shm-usage")
 
 
 def get_token():
