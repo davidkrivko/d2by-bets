@@ -10,7 +10,11 @@ from parcing.fan_sport import (
     collect_fan_sport_leagues,
     collect_fan_sport_league_matches,
 )
-from parcing.d2by import get_d2by_matches
+from parcing.d2by import (
+    get_d2by_sport_matches,
+    get_d2by_cybersport_matches,
+    get_bets_of_d2by_match,
+)
 from parcing.telegram import send_bets_to_telegram
 
 
@@ -48,7 +52,7 @@ async def main():
             start = datetime.datetime.now()
             await delete_old_rows()
 
-        leagues, matches = await get_d2by_matches()
+        leagues, matches = await get_d2by_sport_matches()
 
         tasks = []
         if "Football" in leagues:
@@ -77,3 +81,16 @@ async def main():
             stop = datetime.datetime.now()
             i = 0
             logging.error(f"100 cycles: {stop - start}")
+
+
+async def test_v2_api():
+    start = datetime.datetime.now()
+    matches = await get_d2by_cybersport_matches()
+    stop = datetime.datetime.now()
+    print(stop - start)
+
+    start = datetime.datetime.now()
+    tasks = [get_bets_of_d2by_match(match) for match in matches]
+    await asyncio.gather(*tasks)
+    stop = datetime.datetime.now()
+    print(stop - start)

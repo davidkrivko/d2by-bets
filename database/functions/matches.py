@@ -32,7 +32,8 @@ async def add_match_to_db(data: dict, table: Table):
                 res = await session.execute(insert_stmt)
                 await session.commit()
 
-                return res.inserted_primary_key[0]
+                data["id"] = res.inserted_primary_key[0]
+                return data
             except SQLTimeoutError:
                 return
     else:
@@ -43,7 +44,8 @@ async def add_match_to_db(data: dict, table: Table):
                 await session.execute(update_stmt)
                 await session.commit()
 
-                return match[0]
+                data["id"] = match[0]
+                return data
             except SQLTimeoutError:
                 return
 

@@ -6,84 +6,75 @@ from database.connection import async_session
 from database.tables import d2by_matches, bets_type, bets
 
 
-async def add_bet_type(data: dict):
+async def add_bet_type(data: dict, bets_table):
     async with async_session() as session:
-        select_query = bets_type.select().where(
-            (bets_type.c.type == data["type"]) & (bets_type.c.order == data["order"])
-        )
         try:
+            select_query = bets_table.select().where(bets_table.c.type == data["type"])
             result_set = await session.execute(select_query)
             t_bet = result_set.fetchone()
 
-            return t_bet[0]
-        except SQLTimeoutError:
-            return
-        except:
-            t_bet = None
-
-    if not t_bet:
-        async with async_session() as session:
-            insert_stmt = bets_type.insert().values(data)
-
-            try:
+            if t_bet:
+                data["id"] = t_bet[0]
+                return data
+            else:
+                insert_stmt = bets_table.insert().values(data)
                 res = await session.execute(insert_stmt)
                 await session.commit()
 
-                return res.inserted_primary_key[0]
-            except:
-                pass
+                data["id"] = res.inserted_primary_key[0]
+                return data
+        except SQLTimeoutError:
+            return await add_bet_type(data, bets_table)
+        except Exception as e:
+            return
 
 
 async def add_bet(data: dict):
     async with async_session() as session:
-        select_query = bets.select().where(
-            bets.c.type_id == data["type_id"],
-            bets.c.match_id == data["match_id"],
-        )
         try:
+            # Check if the bet exists
+            select_query = bets.select().where(
+                bets.c.type_id == data["type_id"],
+                bets.c.match_id == data["match_id"],
+                bets.c.values == data["values"],
+                bets.c.extra == data["extra"],
+                )
             result_set = await session.execute(select_query)
             bet = result_set.fetchone()
+
+            # If bet does not exist, insert it
+            if not bet:
+                insert_stmt = bets.insert().values(data)
+                await session.execute(insert_stmt)
+            elif bet:
+                if (
+                    (
+                        round(data.get("d2by_1_win", 1 if bet[3] is None else float(bet[3])), 2)
+                        != float(1 if bet[3] is None else float(bet[3]))
+                        or round(
+                            data.get("d2by_2_win", 1 if bet[4] is None else float(bet[4])), 2
+                        )
+                        != float(1 if bet[4] is None else float(bet[4]))
+                    )
+                    or (
+                        round(data.get("fan_1_win", 1 if bet[4] is None else float(bet[4])), 2)
+                        != float(1 if bet[4] is None else float(bet[4]))
+                        or round(
+                            data.get("fan_2_win", 1 if bet[5] is None else float(bet[5])), 2
+                        )
+                        != float(1 if bet[5] is None else float(bet[5]))
+                    )
+                    or (data.get("isActive") != bet[1])
+                ):
+                    update_stmt = bets.update().where(bets.c.id == bet[0]).values(data)
+                    await session.execute(update_stmt)
+
+            await session.commit()
         except SQLTimeoutError:
             return
-        except:
-            bet = None
+        except Exception as e:
+            return
 
-    if not bet:
-        async with async_session() as session:
-            insert_stmt = bets.insert().values(data)
-
-            try:
-                await session.execute(insert_stmt)
-                await session.commit()
-            except:
-                return
-    if bet:
-        if (
-            (
-                round(data.get("d2by_1_win", 1 if bet[3] is None else float(bet[3])), 2)
-                != float(1 if bet[3] is None else float(bet[3]))
-                or round(
-                    data.get("d2by_2_win", 1 if bet[4] is None else float(bet[4])), 2
-                )
-                != float(1 if bet[4] is None else float(bet[4]))
-            )
-            or (
-                round(data.get("fan_1_win", 1 if bet[4] is None else float(bet[4])), 2)
-                != float(1 if bet[4] is None else float(bet[4]))
-                or round(
-                    data.get("fan_2_win", 1 if bet[5] is None else float(bet[5])), 2
-                )
-                != float(1 if bet[5] is None else float(bet[5]))
-            )
-            or (data.get("isActive") != bet[1])
-        ):
-            async with async_session() as session:
-                update_stmt = bets.update().where(bets.c.id == bet[0]).values(data)
-                try:
-                    await session.execute(update_stmt)
-                    await session.commit()
-                except:
-                    return
 
 
 async def get_bets_of_match(match_id: int, map_number):

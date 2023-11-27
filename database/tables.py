@@ -20,6 +20,9 @@ d2by_matches = Table(
     Column("start_time", TIMESTAMP),
     Column("game", String),
     Column("league", String, nullable=True),
+    Column("team_1_short", String, nullable=True),
+    Column("team_2_short", String, nullable=True),
+    Column("d2by_id", String, nullable=True),
     extend_existing=True,
 )
 
@@ -41,11 +44,22 @@ bets_type = Table(
     meta,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("type", String),
-    Column("order", Integer),
     Column("description", String),
     Column("fan_sport_bet_type", String, nullable=True),
     Column("fan_sport_bet_type_football", String, nullable=True),
     Column("map", Integer, nullable=True),
+    extend_existing=True,
+)
+
+
+bets_type_v2 = Table(
+    "bets_type_v2",
+    meta,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("type", String),
+    Column("description", String),
+    Column("fan_sport_bet_type", String, nullable=True),
+    Column("fan_sport_bet_type_football", String, nullable=True),
     extend_existing=True,
 )
 
@@ -56,21 +70,46 @@ bets = Table(
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("isActive", Boolean),
     Column("values", Numeric(precision=5, scale=1)),
-    Column("d2by_1_win", Numeric(precision=5, scale=2)),
-    Column("d2by_2_win", Numeric(precision=5, scale=2)),
-    Column("fan_1_win", Numeric(precision=5, scale=2), nullable=True),
-    Column("fan_2_win", Numeric(precision=5, scale=2), nullable=True),
+    Column("d2by_1_win", Numeric(precision=5, scale=3)),
+    Column("d2by_2_win", Numeric(precision=5, scale=3)),
+    Column("fan_1_win", Numeric(precision=5, scale=3), nullable=True),
+    Column("fan_2_win", Numeric(precision=5, scale=3), nullable=True),
     Column("type_id", ForeignKey(bets_type.c.id, ondelete="CASCADE")),
     Column("match_id", ForeignKey(d2by_matches.c.id, ondelete="CASCADE")),
-    Column("above_bets", Integer),
+    Column("above_bets", Integer, nullable=True),
     Column("start_time", TIMESTAMP),
     Column("amount_1_win", Numeric(precision=5, scale=2), nullable=True),
     Column("amount_2_win", Numeric(precision=5, scale=2), nullable=True),
+    Column("d2by_id", String),
     Column("d2by_url", String),
     Column("fan_url", String, nullable=True),
     Column("is_shown_10", Boolean, default=False),
     Column("is_shown_5", Boolean, default=False),
     Column("is_shown_2", Boolean, default=False),
+    extend_existing=True,
+)
+
+
+bets_v2 = Table(
+    "bets_v2",
+    meta,
+    Column("id", Integer, primary_key=True, autoincrement=True),
+    Column("isActive", Boolean),
+    Column("values", Numeric(precision=5, scale=1)),
+    Column("extra", String, nullable=True),
+    Column("d2by_1_win", Numeric(precision=5, scale=3)),
+    Column("d2by_draw", Numeric(precision=5, scale=3), nullable=True),
+    Column("d2by_2_win", Numeric(precision=5, scale=3)),
+    Column("fan_1_win", Numeric(precision=5, scale=3), nullable=True),
+    Column("fan_draw", Numeric(precision=5, scale=3), nullable=True),
+    Column("fan_2_win", Numeric(precision=5, scale=3), nullable=True),
+    Column("type_id", ForeignKey(bets_type.c.id, ondelete="CASCADE")),
+    Column("match_id", ForeignKey(d2by_matches.c.id, ondelete="CASCADE")),
+    Column("above_bets", Integer, nullable=True),
+    Column("map_v2", Integer, nullable=True),
+    Column("d2by_id", String),
+    Column("d2by_url", String),
+    Column("fan_url", String, nullable=True),
     extend_existing=True,
 )
 

@@ -1,5 +1,9 @@
 import os
 from dotenv import load_dotenv
+from selenium import webdriver
+from simplegmail import Gmail
+
+from login.api import get_token
 
 load_dotenv()
 
@@ -19,3 +23,7 @@ WORD_BLACK_LIST = ["vfb", "vfl", "gaming", "esports", "ac", "fc", "esport", "tea
 
 TELEGRAM_BOT = os.environ.get("TELEGRAM_BOT")
 CHAT_ID = os.environ.get("CHAT_ID")
+
+GMAIL_CLIENT = Gmail()
+
+AUTH_TOKEN = get_token()
