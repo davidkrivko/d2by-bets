@@ -13,6 +13,9 @@ from login.emails import get_verification_code
 
 CHROME_OPTIONS = webdriver.ChromeOptions()
 CHROME_OPTIONS.add_argument("--window-size=1300,800")
+CHROME_OPTIONS.add_argument("--headless")
+CHROME_OPTIONS.add_argument("--no-sandbox")
+CHROME_OPTIONS.add_argument("--disable-dev-shm-usage")
 
 
 def get_token():
