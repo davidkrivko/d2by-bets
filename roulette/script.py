@@ -26,7 +26,7 @@ async def roulette():
                     await make_bet_on_roulette(AUTH_TOKEN, roulette_id, main_bet)
                     print("Made bet: ", main_bet["amount"], "at: ", now)
                 if zero_bet:
-                    await make_bet_on_roulette(AUTH_TOKEN, roulette_id, main_bet)
+                    await make_bet_on_roulette(AUTH_TOKEN, roulette_id, zero_bet)
 
                 is_bet = False
             elif status == "COMPLETED":
