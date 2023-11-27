@@ -21,7 +21,7 @@ async def roulette():
         while is_bet:
             now = datetime.datetime.utcnow()
 
-            if finish - now < datetime.timedelta(seconds=2) and status == "BETTING":
+            if finish - now < datetime.timedelta(seconds=3) and status == "BETTING":
                 if main_bet:
                     await make_bet_on_roulette(AUTH_TOKEN, roulette_id, main_bet)
                     print("Made bet: ", main_bet["amount"], "at: ", now)
