@@ -43,23 +43,29 @@ async def calculate_bets_for_roulette(auth_token, roulette_id):
             main_bet_data = {}
             zero_bet_data = {}
             if diff > 0:
-                bet = diff * 0.9
+                bet = diff - 0.02
                 if bet > 0.01:
                     main_bet_data = {"coinType": "GOLD", "colorPredict": "RED", "amount": round(bet, 3)}
             elif diff < 0:
-                bet = abs(diff) * 0.9
+                bet = abs(diff) - 0.02
                 if bet > 0.01:
                     main_bet_data = {"coinType": "GOLD", "colorPredict": "BLACK", "amount": round(bet, 3)}
 
             zero_sum = sum((amounts_dict["BLACK"], amounts_dict["RED"])) / 15
-            if (zero_sum > 0.01 and amounts_dict["BLACK"] and amounts_dict["RED"]) or (
-                zero_sum > 0.01 and amounts_dict["BLACK"] > 0.15 or amounts_dict["RED"] > 0.15
-            ):
+            if zero_sum > 0.01:
+                if (amounts_dict["BLACK"] and amounts_dict["RED"]) or (amounts_dict["BLACK"] > 0.15 or amounts_dict["RED"] > 0.15):
+                    zero_bet_data = {
+                        "coinType": "GOLD",
+                        "colorPredict": "GREEN",
+                        "amount": round(zero_sum, 3),
+                    }
+            elif 0.03 < amounts_dict["BLACK"] < 0.15 or 0.03 < amounts_dict["RED"] < 0.15:
                 zero_bet_data = {
                     "coinType": "GOLD",
                     "colorPredict": "GREEN",
-                    "amount": round(zero_sum, 3),
+                    "amount": 0.01,
                 }
+
             return main_bet_data, zero_bet_data
 
         return {}, {}
