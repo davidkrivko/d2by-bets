@@ -1,4 +1,5 @@
 import datetime
+import logging
 from telnetlib import EC
 
 from selenium import webdriver
@@ -15,6 +16,7 @@ CHROME_OPTIONS.add_argument("--window-size=1300,800")
 
 
 def get_token():
+    logging.error("Start login")
     driver = webdriver.Chrome(options=CHROME_OPTIONS)
     driver.get("https://d2by.com/")
 
@@ -59,6 +61,7 @@ def get_token():
 
     cookies = driver.get_cookies()
 
+    logging.error("Get cookies")
     driver.close()
     for ck in cookies:
         if ck["name"] == "_cus_token":
