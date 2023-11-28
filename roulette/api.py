@@ -58,6 +58,9 @@ async def calculate_bets_for_roulette(auth_token, roulette_id):
                     "colorPredict": "GREEN",
                     "amount": 0.01,
                 }
+                zero_sum = 0.01
+            else:
+                zero_sum = 0
 
             if diff > 0:
                 bet = diff - 0.02 - zero_sum
