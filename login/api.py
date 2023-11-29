@@ -10,6 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from config import USERNAME, PASSWORD
 from login.emails import get_verification_code
 
 
@@ -48,8 +49,8 @@ def get_token():
     email_input = driver.find_element(By.NAME, "email")
     password_input = driver.find_element(By.NAME, "password")
 
-    email_input.send_keys("davidkrivko@gmail.com")
-    password_input.send_keys("QPty2002")
+    email_input.send_keys(USERNAME)
+    password_input.send_keys(PASSWORD)
 
     # Click the login button
     time = datetime.datetime.utcnow()

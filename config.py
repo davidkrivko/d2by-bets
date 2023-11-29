@@ -25,4 +25,6 @@ CHAT_ID = os.environ.get("CHAT_ID")
 
 GMAIL_CLIENT = Gmail()
 
-AUTH_TOKEN = get_token()
+
+USERNAME = os.environ.get("USERNAME")
+PASSWORD = os.environ.get("PASSWORD")
