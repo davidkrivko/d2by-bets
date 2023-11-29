@@ -29,4 +29,4 @@ GMAIL_CLIENT = Gmail()
 USERNAME = os.environ.get("USERNAME")
 PASSWORD = os.environ.get("PASSWORD")
 
-AUTH_TOKEN = get_token()
+AUTH_TOKEN = get_token(USERNAME, PASSWORD)
