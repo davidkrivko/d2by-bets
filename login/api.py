@@ -27,8 +27,7 @@ if os.environ.get("CHROME_OPTIONS") == "true":
     CHROME_OPTIONS.add_argument("--no-sandbox")
     CHROME_OPTIONS.add_argument("--disable-dev-shm-usage")
 
-
-def get_token():
+def get_token(username, password):
     logging.error("Start login")
     driver = webdriver.Chrome(options=CHROME_OPTIONS)
     driver.get("https://d2by.com/")
@@ -49,8 +48,8 @@ def get_token():
     email_input = driver.find_element(By.NAME, "email")
     password_input = driver.find_element(By.NAME, "password")
 
-    email_input.send_keys(USERNAME)
-    password_input.send_keys(PASSWORD)
+    email_input.send_keys(username)
+    password_input.send_keys(password)
 
     # Click the login button
     time = datetime.datetime.utcnow()
