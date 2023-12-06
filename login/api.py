@@ -26,6 +26,7 @@ if os.environ.get("CHROME_OPTIONS") == "true":
     CHROME_OPTIONS.add_argument("--no-sandbox")
     CHROME_OPTIONS.add_argument("--disable-dev-shm-usage")
 
+
 def get_token(username, password):
     logging.error("Start login")
     driver = webdriver.Chrome(options=CHROME_OPTIONS)

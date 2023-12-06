@@ -23,10 +23,8 @@ WORD_BLACK_LIST = ["vfb", "vfl", "gaming", "esports", "ac", "fc", "esport", "tea
 TELEGRAM_BOT = os.environ.get("TELEGRAM_BOT")
 CHAT_ID = os.environ.get("CHAT_ID")
 
+USERNAME = os.environ.get("LOGIN_USERNAME")
+PASSWORD = os.environ.get("LOGIN_PASSWORD")
+
 GMAIL_CLIENT = Gmail()
-
-
-USERNAME = os.environ.get("USERNAME")
-PASSWORD = os.environ.get("PASSWORD")
-
 AUTH_TOKEN = get_token(USERNAME, PASSWORD)
