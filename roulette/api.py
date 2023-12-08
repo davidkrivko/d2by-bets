@@ -63,11 +63,11 @@ async def calculate_bets_for_roulette(auth_token, roulette_id):
                 zero_sum = 0
 
             if diff > 0:
-                bet = diff - 0.04 - zero_sum
+                bet = diff - 0.09 - zero_sum
                 if bet > 0.01:
                     main_bet_data = {"coinType": "GOLD", "colorPredict": "RED", "amount": round(bet, 3)}
             elif diff < 0:
-                bet = abs(diff) - 0.04 - zero_sum
+                bet = abs(diff) - 0.09 - zero_sum
                 if bet > 0.01:
                     main_bet_data = {"coinType": "GOLD", "colorPredict": "BLACK", "amount": round(bet, 3)}
 
