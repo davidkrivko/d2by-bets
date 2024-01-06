@@ -5,15 +5,17 @@ import json
 
 import aiohttp
 
-from parcing.betsModel import betsModel
-from database.functions.bets import (
-    get_bets_of_match,
-    update_bet,
-)
-from database.functions.matches import add_match_to_db
+from betsModel import betsModel
 
-from database.tables import fan_sport_matches
-from parcing.utils import (
+from database.v1.bets import (
+    get_bets_of_match,
+    update_bet
+)
+from database.v1.matches import add_match_to_db
+
+from database.v1.tables import fan_sport_matches
+
+from utils import (
     update_team_name,
     are_teams_similar,
     remove_id_key,
@@ -95,12 +97,13 @@ async def collect_fan_sport_league_matches(
                 "team_1": update_team_name(match["O1"]),
                 "team_2": update_team_name(match["O2"]),
                 "start_time": datetime.datetime.fromtimestamp(match["S"]),
-                "d2by_id": mat_id,
-                "sub_matches": [sub[match_key] for sub in match.get("SG", [])]
-                if sport_id == 40
+                "d2by_id": mat["id"],
+                "fan_ids": ",".join([str(sub[match_key]) for sub in match.get("SG", [])] + [str(match[match_key])])
+                if match.get("SG", False)
                 else [],
+                "sport_id": sport_id,
             }
-            for mat_id, mat in mats.items()
+            for mat in mats
             for match in matches
             if (
                 (
@@ -173,6 +176,7 @@ async def collect_fan_sport_match_data(
                 values.get("O2"),
             )
             cfs = {}
+
             for d2by_bet in d2by_bets:
                 for bet in bets:
                     bet_model = betsModel.get(str(bet["T"]), {})

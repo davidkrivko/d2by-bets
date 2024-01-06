@@ -2,23 +2,28 @@ import re
 
 from fuzzywuzzy import fuzz
 
-from config import WORD_BLACK_LIST, THRESHOLD
+from config import WORD_BLACK_LIST, THRESHOLD, USERNAME, PASSWORD
 from login.api import get_token
 
 
-def update_team_name(team):
+def update_team_name(team: str):
     team = team.strip().lower()
 
-    pattern = r"\b(?:" + "|".join(map(re.escape, WORD_BLACK_LIST)) + r")\b"
+    for word in WORD_BLACK_LIST:
+        team = team.replace(word, "")
 
-    result_string = re.sub(pattern, "", team, flags=re.IGNORECASE)
-
-    return result_string.strip()
+    return team.strip()
 
 
 def remove_id_key(d):
-    d.pop("id", None)
-    d.pop("sub_matches", None)
+    ids = []
+
+    ids.append(d.pop("id"))
+    ids.extend(d.pop("sub_matches", []))
+
+    ids = [str(i) for i in ids]
+
+    d["fan_ids"] = ",".join(ids)
     return d
 
 
@@ -82,8 +87,37 @@ def calculate_bets(fan_cf_1, fan_cf_2, d2by_cf_1, d2by_cf_2, d2by_am_1, d2by_am_
 
 
 async def create_new_token():
-    new_token = await get_token()
+    new_token = await get_token(username=USERNAME, password=PASSWORD)
     global AUTH_TOKEN
     AUTH_TOKEN = new_token
 
     return AUTH_TOKEN
+
+
+def get_team_name(bet_name, reverse):
+    if not reverse:
+        if "1" in bet_name:
+            return "1"
+        elif "2" in bet_name:
+            return "2"
+        else:
+            return bet_name
+    else:
+        if "1" in bet_name:
+            return "2"
+        elif "2" in bet_name:
+            return "1"
+        else:
+            return bet_name
+
+
+def add_bet_to_cfs(data, bet_id, bet_name, coef, url):
+    b_data = data.get(bet_id, None)
+    if not b_data:
+        data[bet_id] = {
+            "id": bet_id,
+            "fan_bets": {f"{bet_name}": coef},
+            "fan_url": url,
+        }
+    else:
+        data[bet_id]["fan_bets"].update({f"{bet_name}": coef})

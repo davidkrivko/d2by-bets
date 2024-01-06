@@ -9,7 +9,7 @@ from sqlalchemy import (
     ForeignKey,
 )
 
-from database.connection import meta, db
+from database.v1.connection import meta
 
 d2by_matches = Table(
     "d2by_matches",
@@ -20,9 +20,6 @@ d2by_matches = Table(
     Column("start_time", TIMESTAMP),
     Column("game", String),
     Column("league", String, nullable=True),
-    Column("team_1_short", String, nullable=True),
-    Column("team_2_short", String, nullable=True),
-    Column("d2by_id", String, nullable=True),
     extend_existing=True,
 )
 
@@ -33,6 +30,8 @@ fan_sport_matches = Table(
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("team_1", String),
     Column("team_2", String),
+    Column("fan_ids", String),
+    Column("sport_id", Integer),
     Column("start_time", TIMESTAMP),
     Column("d2by_id", ForeignKey(d2by_matches.c.id, ondelete="CASCADE"), unique=True),
     extend_existing=True,
@@ -52,24 +51,12 @@ bets_type = Table(
 )
 
 
-bets_type_v2 = Table(
-    "bets_type_v2",
-    meta,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("type", String),
-    Column("description", String),
-    Column("fan_sport_bet_type", String, nullable=True),
-    Column("fan_sport_bet_type_football", String, nullable=True),
-    extend_existing=True,
-)
-
-
-bets = Table(
+bets_table = Table(
     "bets",
     meta,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("isActive", Boolean),
-    Column("values", Numeric(precision=5, scale=1)),
+    Column("value", Numeric(precision=5, scale=1)),
     Column("d2by_1_win", Numeric(precision=5, scale=3)),
     Column("d2by_2_win", Numeric(precision=5, scale=3)),
     Column("fan_1_win", Numeric(precision=5, scale=3), nullable=True),
@@ -88,33 +75,3 @@ bets = Table(
     Column("is_shown_2", Boolean, default=False),
     extend_existing=True,
 )
-
-
-bets_v2 = Table(
-    "bets_v2",
-    meta,
-    Column("id", Integer, primary_key=True, autoincrement=True),
-    Column("isActive", Boolean),
-    Column("values", Numeric(precision=5, scale=1)),
-    Column("extra", String, nullable=True),
-    Column("d2by_1_win", Numeric(precision=5, scale=3)),
-    Column("d2by_draw", Numeric(precision=5, scale=3), nullable=True),
-    Column("d2by_2_win", Numeric(precision=5, scale=3)),
-    Column("fan_1_win", Numeric(precision=5, scale=3), nullable=True),
-    Column("fan_draw", Numeric(precision=5, scale=3), nullable=True),
-    Column("fan_2_win", Numeric(precision=5, scale=3), nullable=True),
-    Column("type_id", ForeignKey(bets_type.c.id, ondelete="CASCADE")),
-    Column("match_id", ForeignKey(d2by_matches.c.id, ondelete="CASCADE")),
-    Column("above_bets", Integer, nullable=True),
-    Column("map_v2", Integer, nullable=True),
-    Column("d2by_id", String),
-    Column("d2by_url", String),
-    Column("fan_url", String, nullable=True),
-    extend_existing=True,
-)
-
-
-async def create_tables():
-    async with db.begin() as conn:
-        await conn.run_sync(meta.drop_all)
-        await conn.run_sync(meta.create_all)

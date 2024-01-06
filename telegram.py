@@ -2,7 +2,7 @@ import datetime
 import aiohttp
 
 from config import TELEGRAM_BOT, CHAT_ID, SENDING_MESSAGES_DELTA
-from database.functions.matches import update_is_shown_field
+from database.v1.bets import update_is_shown_field
 
 
 async def send_telegram_message(message):
@@ -18,8 +18,10 @@ async def send_telegram_message(message):
 def escape_markdown_v2(string):
     if "https" not in string:
         escape_chars = "_*[]()~`>#+-=|{}.!"
-        return "".join(f"\\{char}" if char in escape_chars else char for char in string)
+        for char in escape_chars:
+            string = string.replace(char, f"\\{char}")
     return string
+
 
 # 1. id,
 # 2. d2by_1_win,
@@ -42,9 +44,9 @@ def escape_markdown_v2(string):
 # 19. bets.c.d2by_url,
 # 20.  bets.c.fan_url,
 def bet_message(bet):
-    if 'Handicap' in bet[7]:
+    if "Handicap" in bet[7]:
         sub_str = "negative "
-        if bet[15] is not None and bet[15] == '1':
+        if bet[15] is not None and bet[15] == "1":
             sub_str += f"{bet[5]} for team {bet[9]}"
         else:
             sub_str += f"{bet[5]} for team {bet[10]}"
@@ -83,3 +85,50 @@ async def send_bets_to_telegram(bets_data: list):
                 bet = [escape_markdown_v2(str(i)) for i in bet]
                 message = bet_message(bet)
                 await send_telegram_message(message)
+
+
+# bet_table.c.id, 0
+# bet_table.c.d2by_bets, 1
+# bet_table.c.fan_bets, 2
+# bet_table.c["value"].label("bet_values"), 3
+# bet_table.c.start_time, 4
+# bet_type_table.c.description, 5
+# d2by_matches.c.id.label("match_id"), 6
+# d2by_matches.c.team_1, 7
+# d2by_matches.c.team_2, 8
+# d2by_matches.c.game, 9
+# bet_table.c.above_bets, 10
+# d2by_matches.c.d2by_url, 11
+# bet_table.c.fan_url, 12
+async def send_match_to_telegram_v2(bets_data: list):
+    fan_bets = bets_data[2]
+    fan_bets = "".join([f"{key} : {value} - " for key, value in fan_bets.items()])
+
+    d2by_bets = bets_data[1]
+    d2by_bets = "".join([f"{key} : {value} - " for key, value in d2by_bets.items()])
+
+    bets_data[1] = d2by_bets
+    bets_data[2] = fan_bets
+
+    bet = [escape_markdown_v2(str(i)) for i in bets_data]
+
+    if "Handicap" in bet[5]:
+        sub_str = "negative "
+        if bet[10] is not None and bet[10] == "1":
+            sub_str += f"{bet[3]} for team {bet[7]}"
+        else:
+            sub_str += f"{bet[3]} for team {bet[8]}"
+    else:
+        sub_str = f"{bet[3]}"
+
+    message = (
+        f"       **{bet[9]}**    \n"
+        f"**{bet[7]} \\- {bet[8]}**\n"
+        f"**{bet[5]}:** {sub_str}\n"
+        f"[D2BY]({bet[11]}): **{bet[1]}**\n"
+        f"[FanSport]({bet[12]}): **{bet[2]}**\n"
+        f"Bet active until {bet[4]}\n"
+    )
+    await send_telegram_message(message)
+
+    return int(bet[0])
