@@ -12,7 +12,7 @@ root_directory = os.path.dirname(parent_directory)
 sys.path.append(root_directory)
 
 
-from database.v2.matches import get_d2by_matches
+from database.v2.matches import get_d2by_line_matches, get_d2by_live_matches
 from esport.fan_sport import (
     collect_fan_sport_leagues,
     collect_fan_sport_league_matches_v2,
@@ -20,8 +20,10 @@ from esport.fan_sport import (
 
 
 async def collect_fan_sport_matches():
-    matches = await get_d2by_matches()
+    matches = await get_d2by_line_matches()
+    matches += await get_d2by_live_matches()
 
+    await get_d2by_line_matches()
     leags = await collect_fan_sport_leagues(40, "LineFeed")
 
     tasks = [
