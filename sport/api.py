@@ -126,7 +126,7 @@ async def make_bet(auth_token, data):
 
     async with aiohttp.ClientSession(cookies=[auth_token], headers=headers) as session:
         async with session.post(
-            "https://api.d2by.com/api/v1/web/bets/bet", data=data
+            "https://api.d2by.com/api/v1/web/bets/bet", json=data
         ) as resp:
             if resp.status != 200:
                 token = await create_new_token()

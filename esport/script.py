@@ -1,6 +1,7 @@
 import asyncio
 
-from database.v2.bets import get_all_active_bets, is_shown_update
+from config import AUTH_TOKEN
+from database.v2.bets import get_all_active_bets, is_shown_update, get_bet_from_market
 from database.v2.matches import (
     get_d2by_live_matches,
     get_d2by_line_matches,
@@ -9,7 +10,7 @@ from database.v2.matches import (
 )
 
 from esport.fan_sport import compare_bets_v2
-from esport.api import get_bets_of_d2by_match
+from esport.api import get_bets_of_d2by_match, make_bet
 from telegram import send_match_to_telegram_v2
 
 
@@ -19,8 +20,8 @@ def query_compare_bet_cfs_v2(d2by_bets, fan_bets):
             value1 = d2by_bets[key]
             value2 = fan_bets[key]
 
-            if value1 / value2 >= 1.15 or value1 / value2 <= 0.85:
-                return True
+            if value1 / value2 >= 1.15:
+                return key
 
     return False
 
@@ -48,10 +49,32 @@ async def v2_script(time: str):
     all_bets = await get_all_active_bets()
 
     bets = []
+    tasks = []
     for bet in all_bets:
-        if query_compare_bet_cfs_v2(bet[1], bet[2]):
-            bets.append(list(bet))
+        if bet[16] is False:
+            key = query_compare_bet_cfs_v2(bet[1], bet[2])
+            if key:
+                if prob["prob"] > 0.28:
+                    bets.append(list(bet))
 
-    sended_ids = await asyncio.gather(*[send_match_to_telegram_v2(bets_data) for bets_data in bets])
+                    prob = bet[15][key]
 
-    await is_shown_update(sended_ids)
+                    data = {
+                        "amount": 1,
+                        "coinType": "GEM",
+                        "market": bet[14],
+                        "type": "SINGLE",
+                        "currentRate": prob["prob"],
+                        "selectPosition": prob["position"],
+                    }
+                    tasks.append(make_bet(AUTH_TOKEN, data))
+
+    responses = await asyncio.gather(*tasks)
+
+    tasks = [get_bet_from_market(data) for data in responses]
+    bets = await asyncio.gather(*tasks)
+
+    success_bets = [bet[0] for bet in bets if bet[17] == "Success"]
+    await is_shown_update(success_bets)
+
+    await asyncio.gather(*[send_match_to_telegram_v2(bets_data) for bets_data in bets if bets_data[16] == False])

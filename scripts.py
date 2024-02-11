@@ -11,12 +11,10 @@ async def update_all_bets():
     while True:
         start = datetime.datetime.now()
 
-        if i == 50:
-            await v1_script()
-            await v2_script("line")
-            i = 0
-
-        await v2_script("live")
+        await v1_script()
+        # await v2_script("line")
+        #
+        # await v2_script("live")
 
         i += 1
         stop = datetime.datetime.now()

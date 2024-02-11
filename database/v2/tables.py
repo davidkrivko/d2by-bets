@@ -63,6 +63,8 @@ bets_table = Table(
     Column("extra", String, nullable=True),
     Column("d2by_bets", JSONB, default={}),
     Column("fan_bets", JSONB, default={}),
+    Column("d2by_probs", JSONB, default={}),
+    Column("bet_id", String),
     Column("start_time", TIMESTAMP),
     Column("type_id", ForeignKey(bets_type.c.id, ondelete="CASCADE")),
     Column("match_id", ForeignKey(d2by_matches.c.id, ondelete="CASCADE")),

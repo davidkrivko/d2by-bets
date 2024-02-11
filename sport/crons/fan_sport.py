@@ -16,7 +16,6 @@ from database.v1.matches import get_d2by_matches
 from sport.fan_sport import (
     collect_fan_sport_leagues,
     collect_fan_sport_league_matches,
-    collect_fan_sport_match_data,
 )
 
 

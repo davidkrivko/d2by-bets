@@ -24,3 +24,4 @@ async def v1_script():
 
     bets = await get_all_active_bets()
     await send_bets_to_telegram(bets)
+

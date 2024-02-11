@@ -45,9 +45,9 @@ async def add_match_to_db(data: dict, table: Table):
                 data["id"] = res.inserted_primary_key[0]
                 return data
             except SQLTimeoutError:
-                return
+                return data
             except Exception as e:
-                pass
+                return data
     else:
         async with async_session() as session:
             update_stmt = table.update().where(table.c.id == match[0]).values(data)
@@ -59,9 +59,9 @@ async def add_match_to_db(data: dict, table: Table):
                 data["id"] = match[0]
                 return data
             except SQLTimeoutError:
-                return
+                return data
             except Exception as e:
-                pass
+                return data
 
 
 async def get_d2by_matches():

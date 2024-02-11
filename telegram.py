@@ -3,6 +3,7 @@ import aiohttp
 
 from config import TELEGRAM_BOT, CHAT_ID, SENDING_MESSAGES_DELTA
 from database.v1.bets import update_is_shown_field
+from sport.api import make_bet
 
 
 async def send_telegram_message(message):
@@ -71,17 +72,9 @@ async def send_bets_to_telegram(bets_data: list):
             diff = bet[6] - now
 
             if diff < datetime.timedelta(minutes=2) and bet[12] is False:
+                await make_bet()
+
                 await update_is_shown_field(bet[0], {"is_shown_2": True})
-                bet = [escape_markdown_v2(str(i)) for i in bet]
-                message = bet_message(bet)
-                await send_telegram_message(message)
-            elif diff < datetime.timedelta(minutes=5) and bet[13] is False:
-                await update_is_shown_field(bet[0], {"is_shown_5": True})
-                bet = [escape_markdown_v2(str(i)) for i in bet]
-                message = bet_message(bet)
-                await send_telegram_message(message)
-            elif diff < datetime.timedelta(minutes=10) and bet[14] is False:
-                await update_is_shown_field(bet[0], {"is_shown_10": True})
                 bet = [escape_markdown_v2(str(i)) for i in bet]
                 message = bet_message(bet)
                 await send_telegram_message(message)
@@ -100,6 +93,11 @@ async def send_bets_to_telegram(bets_data: list):
 # bet_table.c.above_bets, 10
 # d2by_matches.c.d2by_url, 11
 # bet_table.c.fan_url, 12
+# bets_table.c.map_v2, 13
+# bets_table.c.bet_id 14
+# bets_table.c.is_shown 15
+# bet_table.c.d2by_probs, 16
+# bet status 17
 async def send_match_to_telegram_v2(bets_data: list):
     fan_bets = bets_data[2]
     fan_bets = "".join([f"{key} : {value} - " for key, value in fan_bets.items()])
@@ -124,10 +122,10 @@ async def send_match_to_telegram_v2(bets_data: list):
     message = (
         f"       **{bet[9]}**    \n"
         f"**{bet[7]} \\- {bet[8]}**\n"
-        f"**{bet[5]}:** {sub_str}\n"
+        f"**{bet[5]} {bet[13]}:** {sub_str}\n"
         f"[D2BY]({bet[11]}): **{bet[1]}**\n"
         f"[FanSport]({bet[12]}): **{bet[2]}**\n"
-        f"Bet active until {bet[4]}\n"
+        f"Bet status: **{bet[17]}**\n"
     )
     await send_telegram_message(message)
 

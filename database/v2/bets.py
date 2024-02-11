@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from sqlalchemy import and_, select
 
 from database.v2.connection import async_session_2 as async_session
@@ -134,6 +136,8 @@ async def update_bet(data: dict):
 
 
 async def get_all_active_bets():
+    two_hours_from_now = datetime.now() + timedelta(hours=2)
+
     async with async_session() as session:
         select_query = (
             select(
@@ -151,6 +155,10 @@ async def get_all_active_bets():
                     bets_table.c.above_bets,
                     d2by_matches.c.d2by_url,
                     bets_table.c.fan_url,
+                    bets_table.c.map_v2,
+                    bets_table.c.bet_id,
+                    bets_table.c.d2by_probs,
+                    bets_table.c.is_shown
                 ]
             )
             .select_from(
@@ -162,6 +170,7 @@ async def get_all_active_bets():
                 (bets_table.c.fan_bets != {})
                 & (bets_table.c.isActive == True)
                 & (bets_table.c.is_shown == False)
+                & (d2by_matches.c.start_time < two_hours_from_now)
             )
         )
 
@@ -185,5 +194,49 @@ async def is_shown_update(ids):
             await session.commit()
         except SQLTimeoutError:
             return
+        except Exception as e:
+            return
+
+
+async def get_bet_from_market(data):
+    async with async_session() as session:
+        try:
+            select_query = (
+                select(
+                    *[
+                        bets_table.c.id,
+                        bets_table.c.d2by_bets,
+                        bets_table.c.fan_bets,
+                        bets_table.c["value"].label("bet_values"),
+                        bets_table.c.start_time,
+                        bets_type.c.description,
+                        d2by_matches.c.id.label("match_id"),
+                        d2by_matches.c.team_1,
+                        d2by_matches.c.team_2,
+                        d2by_matches.c.game,
+                        bets_table.c.above_bets,
+                        d2by_matches.c.d2by_url,
+                        bets_table.c.fan_url,
+                        bets_table.c.map_v2,
+                        bets_table.c.bet_id,
+                        bets_table.c.d2by_probs,
+                        bets_table.c.is_shown,
+                    ]
+                )
+                .select_from(
+                    bets_table.join(bets_type, bets_table.c.type_id == bets_type.c.id).join(
+                        d2by_matches, bets_table.c.match_id == d2by_matches.c.id
+                    )
+                )
+                .where(
+                    bets_table.c.bet_id == data["market"]
+                )
+            )
+
+            result_set = await session.execute(select_query)
+            bet = list(result_set.fetchone())
+            bet.append(data["status"])
+
+            return bet
         except Exception as e:
             return
