@@ -73,7 +73,7 @@ async def v2_script(time: str, token):
     tasks = [get_bet_from_market(data) for data in responses]
     bets = await asyncio.gather(*tasks)
 
-    success_bets = [bet[0] for bet in bets if bet[17] == "Success"]
+    success_bets = [bet[0] for bet in bets]
     await is_shown_update(success_bets)
 
-    await asyncio.gather(*[send_match_to_telegram_v2(bets_data) for bets_data in bets if bets_data[16] == False])
+    await asyncio.gather(*[send_match_to_telegram_v2(bets_data) for bets_data in bets if bets_data[16] is False])
