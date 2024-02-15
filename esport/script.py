@@ -53,10 +53,10 @@ async def v2_script(time: str, token):
         if bet[16] is False:
             key = query_compare_bet_cfs_v2(bet[1], bet[2])
             if key:
+                prob = bet[15][key]
+
                 if prob["prob"] > 0.28:
                     bets.append(list(bet))
-
-                    prob = bet[15][key]
 
                     data = {
                         "amount": 1,
