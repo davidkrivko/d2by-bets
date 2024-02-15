@@ -37,8 +37,14 @@ async def handle_matches_for_league(leag, matches, sport_id, match_type):
 async def collect_fan_sport_matches():
     leagues, matches = await get_d2by_matches()
 
-    await handle_league(1, leagues["Football"], matches, "LineFeed")
-    await handle_league(3, leagues["Basketball"], matches, "LineFeed")
+    tasks = []
+    if leagues.get("Football"):
+        tasks.append(handle_league(1, leagues["Football"], matches, "LineFeed"))
+
+    if leagues.get("Basketball"):
+        tasks.append(handle_league(3, leagues["Basketball"], matches, "LineFeed"))
+
+    await asyncio.gather(*tasks)
 
 
 asyncio.run(collect_fan_sport_matches())
