@@ -1,6 +1,5 @@
 import asyncio
 
-from config import AUTH_TOKEN
 from database.v2.bets import get_all_active_bets, is_shown_update, get_bet_from_market
 from database.v2.matches import (
     get_d2by_live_matches,
@@ -26,7 +25,7 @@ def query_compare_bet_cfs_v2(d2by_bets, fan_bets):
     return False
 
 
-async def v2_script(time: str):
+async def v2_script(time: str, token):
     if time == "live":
         matches = await get_d2by_live_matches()
         mats = await get_fan_sport_live_matches()
@@ -67,7 +66,7 @@ async def v2_script(time: str):
                         "currentRate": prob["prob"],
                         "selectPosition": prob["position"],
                     }
-                    tasks.append(make_bet(AUTH_TOKEN, data))
+                    tasks.append(make_bet(token, data))
 
     responses = await asyncio.gather(*tasks)
 

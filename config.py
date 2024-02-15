@@ -1,10 +1,6 @@
 import os
 from dotenv import load_dotenv
 
-from simplegmail import Gmail
-
-from login.api import get_token
-
 load_dotenv()
 
 
@@ -44,9 +40,6 @@ CHAT_ID = os.environ.get("CHAT_ID")
 
 USERNAME = os.environ.get("LOGIN_USERNAME")
 PASSWORD = os.environ.get("LOGIN_PASSWORD")
-
-GMAIL_CLIENT = Gmail()
-AUTH_TOKEN = get_token(USERNAME, PASSWORD)
 
 DEFAULT_D2BY_HEADERS = {
         "accept": "application/json",
