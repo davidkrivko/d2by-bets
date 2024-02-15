@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import logging
 
@@ -19,10 +20,12 @@ async def update_all_bets():
     while True:
         start = datetime.datetime.now()
 
-        await v1_script()
-        await v2_script("line", AUTH_TOKEN)
-
-        await v2_script("live", AUTH_TOKEN)
+        tasks = [
+            v1_script(),
+            v2_script("line", AUTH_TOKEN),
+            v2_script("live", AUTH_TOKEN),
+        ]
+        await asyncio.gather(*tasks)
 
         i += 1
         stop = datetime.datetime.now()

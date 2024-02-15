@@ -4,7 +4,7 @@ import re
 
 import aiohttp
 
-from config import D2BY_TIME_DELTA
+from config import D2BY_TIME_DELTA, DEFAULT_D2BY_HEADERS
 from database.v1.bets import (
     add_bet_type,
     add_bet,
@@ -16,7 +16,7 @@ from utils import update_team_name, create_new_token
 
 
 async def collect_d2by_sport_matches():
-    async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession(headers=DEFAULT_D2BY_HEADERS) as session:
         async with session.get(
             "https://api.d2by.com/api/v1/web/matchs?isFinish=false&isCancel=false&pageSize=1000"
         ) as resp:
@@ -122,14 +122,15 @@ async def collect_d2by_sport_matches():
 
 
 async def make_bet(auth_token, data):
-    headers = {"Authorization": f"Bearer {auth_token['value']}"}
+    headers = DEFAULT_D2BY_HEADERS
+    headers["Authorization"] = f"Bearer {auth_token['value']}"
 
     async with aiohttp.ClientSession(cookies=[auth_token], headers=headers) as session:
         async with session.post(
             "https://api.d2by.com/api/v1/web/bets/bet", json=data
         ) as resp:
             if resp.status != 200:
-                token = await create_new_token()
+                token = await create_new_token(auth_token)
                 await make_bet(token, data)
             else:
                 response = await resp.text()

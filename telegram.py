@@ -72,7 +72,7 @@ async def send_bets_to_telegram(bets_data: list):
             diff = bet[6] - now
 
             if diff < datetime.timedelta(minutes=2) and bet[12] is False:
-                await make_bet()
+                # await make_bet()
 
                 await update_is_shown_field(bet[0], {"is_shown_2": True})
                 bet = [escape_markdown_v2(str(i)) for i in bet]
