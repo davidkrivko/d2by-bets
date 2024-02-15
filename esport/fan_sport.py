@@ -2,11 +2,12 @@ import asyncio
 import copy
 import datetime
 import json
+import os
 
 import aiohttp
 
 from betsModel import betsModel
-from config import DEFAULT_FAN_HEADERS
+from config import DEFAULT_FAN_HEADERS, FAN_SPORT_DELTA
 
 from database.v2.bets import (
     get_bets_of_match as get_bets_of_match_v2,
@@ -99,7 +100,10 @@ async def collect_fan_sport_league_matches_v2(
                 "id": match[match_key],
                 "team_1": update_team_name(match["O1"]),
                 "team_2": update_team_name(match["O2"]),
-                "start_time": datetime.datetime.fromtimestamp(match["S"]),
+                "start_time": (
+                        datetime.datetime.fromtimestamp(match["S"])
+                        + datetime.timedelta(FAN_SPORT_DELTA)
+                ),
                 "d2by_id": mat["id"],
                 "sub_matches": [sub[match_key] for sub in match.get("SG", [])]
                 if sport_id == 40

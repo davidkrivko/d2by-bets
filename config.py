@@ -17,6 +17,7 @@ DB2_PORT = os.environ.get("DB2_PORT")
 DB2_NAME = os.environ.get("DB2_NAME")
 
 D2BY_TIME_DELTA = int(os.environ.get("D2BY_TIME_DELTA", 0))
+FAN_SPORT_DELTA = int(os.environ.get("FAN_SPORT_DELTA", 0))
 SENDING_MESSAGES_DELTA = int(os.environ.get("SENDING_MESSAGES_DELTA", 0))
 
 THRESHOLD = 60
