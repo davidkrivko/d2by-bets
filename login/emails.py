@@ -4,13 +4,11 @@ from simplegmail.query import construct_query
 from bs4 import BeautifulSoup
 
 
-def get_verification_code(time):
-    from config import GMAIL_CLIENT
-
+def get_verification_code(time, gmail_client):
     is_new = True
     while is_new:
         query_params = {"unread": True, "sender": "noreply@d2by.com"}
-        messages = GMAIL_CLIENT.get_messages(query=construct_query(query_params))
+        messages = gmail_client.get_messages(query=construct_query(query_params))
         if messages:
             message = messages[0]
 

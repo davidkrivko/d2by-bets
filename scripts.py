@@ -14,7 +14,7 @@ async def update_all_bets():
     i = 0
 
     GMAIL_CLIENT = Gmail()
-    AUTH_TOKEN = get_token(USERNAME, PASSWORD)
+    AUTH_TOKEN = get_token(USERNAME, PASSWORD, GMAIL_CLIENT)
 
     while True:
         start = datetime.datetime.now()

@@ -86,8 +86,8 @@ def calculate_bets(fan_cf_1, fan_cf_2, d2by_cf_1, d2by_cf_2, d2by_am_1, d2by_am_
     return amount_bet, side
 
 
-async def create_new_token():
-    new_token = await get_token(username=USERNAME, password=PASSWORD)
+async def create_new_token(gmail_client):
+    new_token = await get_token(username=USERNAME, password=PASSWORD, gmail_client=gmail_client)
     global AUTH_TOKEN
     AUTH_TOKEN = new_token
 

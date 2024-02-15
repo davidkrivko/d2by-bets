@@ -27,7 +27,7 @@ if os.environ.get("CHROME_OPTIONS") == "true":
     CHROME_OPTIONS.add_argument("--disable-dev-shm-usage")
 
 
-def get_token(username, password):
+def get_token(username, password, gmail_client):
     logging.error("Start login")
     driver = webdriver.Chrome(options=CHROME_OPTIONS)
     driver.get("https://d2by.com/")
@@ -57,7 +57,7 @@ def get_token(username, password):
     login_button = driver.find_element(By.CSS_SELECTOR, ".button.to-yellow-f9b80e")
     login_button.click()
 
-    ver_code = get_verification_code(time)
+    ver_code = get_verification_code(time, gmail_client)
 
     code_input = driver.find_element(By.NAME, "verifyCode")
     code_input.send_keys(ver_code)
