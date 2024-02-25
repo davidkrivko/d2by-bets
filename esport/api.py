@@ -92,6 +92,11 @@ async def create_bet_v2(bet_data: dict, match: dict):
                 if selection["probability_with_margin"] == 0
                 else selection["probability_with_margin"]
             )
+            prob = (
+                1
+                if prob is None
+                else prob
+            )
             cf = round(1 / prob, 3)
             if "correct-score" == bet_data["template"]:
                 bet["d2by_bets"].update(

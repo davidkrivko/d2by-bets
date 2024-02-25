@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="bets_2" uuid="f2c90663-ea81-4d8f-a279-87f680900af4">
+    <data-source source="LOCAL" name="bets" uuid="f2c90663-ea81-4d8f-a279-87f680900af4">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
       <jdbc-url>jdbc:postgresql://localhost:5432/bets_2</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="bets@localhost" uuid="65ba84f2-85dc-4859-aa84-557470c6ce74">
+    <data-source source="LOCAL" name="bets@50.17.58.36" uuid="3ce357ca-b14d-4cfb-9cac-8b96c59f760a">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://localhost:5432/bets</jdbc-url>
+      <jdbc-url>jdbc:postgresql://50.17.58.36:5432/bets</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="bets_2@50.17.58.36" uuid="ae3de687-a3a6-40ec-8acc-88e1bf0160b5">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://50.17.58.36:5432/bets_2</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

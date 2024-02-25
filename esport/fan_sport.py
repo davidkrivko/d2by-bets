@@ -2,7 +2,6 @@ import asyncio
 import copy
 import datetime
 import json
-import os
 
 import aiohttp
 
@@ -206,7 +205,7 @@ async def compare_bets_v2(
                         bet_name = get_team_name(bet_model["N"], is_reverse)
 
                         if is_reverse:
-                            if not value:
+                            if not d2by_bet[3] and not value:
                                 add_bet_to_cfs(
                                     cfs, d2by_bet[0], bet_name, bet["C"], fan_url
                                 )
@@ -217,15 +216,26 @@ async def compare_bets_v2(
                                 #             cfs, d2by_bet[0], bet_name, bet["C"], fan_url
                                 #         )
                             else:
-                                if abs(value) == d2by_bet[3]:
-                                    if "handicap" in bet_model["GN"].lower():
-                                        if (
-                                            str(d2by_bet[10]) in bet_model["N"]
-                                            and value == d2by_bet[3]
-                                        ) or (
-                                            str(d2by_bet[10]) not in bet_model["N"]
-                                            and value == d2by_bet[3] * -1
-                                        ):
+                                if value:
+                                    if abs(value) == d2by_bet[3]:
+                                        if "handicap" in bet_model["GN"].lower():
+                                            if (
+                                                str(d2by_bet[10]) in bet_model["N"]
+                                                and value == d2by_bet[3]
+                                            ) or (
+                                                str(d2by_bet[10]) not in bet_model["N"]
+                                                and value == d2by_bet[3] * -1
+                                            ):
+                                                add_bet_to_cfs(
+                                                    cfs,
+                                                    d2by_bet[0],
+                                                    bet_name,
+                                                    bet["C"],
+                                                    fan_url,
+                                                )
+                                        elif "total" in bet_model["GN"].lower():
+                                            continue
+                                        else:
                                             add_bet_to_cfs(
                                                 cfs,
                                                 d2by_bet[0],
@@ -233,29 +243,8 @@ async def compare_bets_v2(
                                                 bet["C"],
                                                 fan_url,
                                             )
-                                    elif "Correct Score" == bet_model["GN"]:
-                                        bet_name = "-".join(
-                                            str(reversed(value)).split(".00")
-                                        )
-                                        add_bet_to_cfs(
-                                            cfs,
-                                            d2by_bet[0],
-                                            bet_name,
-                                            bet["C"],
-                                            fan_url,
-                                        )
-                                    elif "total" in bet_model["GN"].lower():
-                                        continue
-                                    else:
-                                        add_bet_to_cfs(
-                                            cfs,
-                                            d2by_bet[0],
-                                            bet_name,
-                                            bet["C"],
-                                            fan_url,
-                                        )
                         else:
-                            if not value:
+                            if not d2by_bet[3] and not value:
                                 add_bet_to_cfs(
                                     cfs, d2by_bet[0], bet_name, bet["C"], fan_url
                                 )
@@ -266,15 +255,26 @@ async def compare_bets_v2(
                                 #             cfs, d2by_bet[0], bet_name, bet["C"], fan_url
                                 #         )
                             else:
-                                if abs(value) == d2by_bet[3]:
-                                    if "handicap" in bet_model["GN"].lower():
-                                        if (
-                                            str(d2by_bet[10]) in bet_model["N"]
-                                            and value == d2by_bet[3] * -1
-                                        ) or (
-                                            str(d2by_bet[10]) not in bet_model["N"]
-                                            and value == d2by_bet[3]
-                                        ):
+                                if value:
+                                    if abs(value) == d2by_bet[3]:
+                                        if "handicap" in bet_model["GN"].lower():
+                                            if (
+                                                str(d2by_bet[10]) in bet_model["N"]
+                                                and value == d2by_bet[3] * -1
+                                            ) or (
+                                                str(d2by_bet[10]) not in bet_model["N"]
+                                                and value == d2by_bet[3]
+                                            ):
+                                                add_bet_to_cfs(
+                                                    cfs,
+                                                    d2by_bet[0],
+                                                    bet_name,
+                                                    bet["C"],
+                                                    fan_url,
+                                                )
+                                        elif "total" in bet_model["GN"].lower():
+                                            continue
+                                        else:
                                             add_bet_to_cfs(
                                                 cfs,
                                                 d2by_bet[0],
@@ -282,23 +282,6 @@ async def compare_bets_v2(
                                                 bet["C"],
                                                 fan_url,
                                             )
-                                    elif "Correct Score" == bet_model["GN"]:
-                                        bet_name = "-".join(str(value).split(".00"))
-                                        if bet_name == "2":
-                                            bet_name = "2-0"
-                                        add_bet_to_cfs(
-                                            cfs, d2by_bet[0], bet_name, bet["C"], fan_url
-                                        )
-                                    elif "total" in bet_model["GN"].lower():
-                                        continue
-                                    else:
-                                        add_bet_to_cfs(
-                                            cfs,
-                                            d2by_bet[0],
-                                            bet_name,
-                                            bet["C"],
-                                            fan_url,
-                                        )
                         if (
                             "total" in bet_model["GN"].lower()
                             and "handicap" not in bet_model["GN"].lower()

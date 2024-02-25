@@ -1,5 +1,5 @@
 import pandas as pd
-from sqlalchemy import Table, text, select, func
+from sqlalchemy import Table, text, select, func, and_
 from sqlalchemy.exc import TimeoutError as SQLTimeoutError
 
 from database.v2.connection import async_session_2 as async_session
@@ -123,12 +123,18 @@ async def get_d2by_line_matches():
     ]
 
     fifteen_minutes_ago = func.now() - text("INTERVAL '15 minutes'")
+    three_hours_more = func.now() + text("INTERVAL '3 hours'")
 
     async with async_session() as session:
         select_query = (
             select(*query_cols)
             .select_from(d2by_matches)
-            .where(d2by_matches.c.start_time > fifteen_minutes_ago)
+            .where(
+                and_(
+                    d2by_matches.c.start_time > fifteen_minutes_ago,
+                    d2by_matches.c.start_time < three_hours_more
+                )
+            )
         )
 
         try:
