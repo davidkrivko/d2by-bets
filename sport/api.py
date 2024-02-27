@@ -18,7 +18,8 @@ from utils import update_team_name, create_new_token
 async def collect_d2by_sport_matches():
     async with aiohttp.ClientSession(headers=DEFAULT_D2BY_HEADERS) as session:
         async with session.get(
-            "https://api.d2by.com/api/v1/web/matchs?isFinish=false&isCancel=false&pageSize=1000"
+            "https://api.d2by.com/api/v1/web/matchs?isFinish=false&isCancel=false&pageSize=1000",
+            ssl=False
         ) as resp:
             response = await resp.text()
             matches = json.loads(response)
@@ -127,7 +128,8 @@ async def make_bet(auth_token, data):
 
     async with aiohttp.ClientSession(cookies=[auth_token], headers=headers) as session:
         async with session.post(
-            "https://api.d2by.com/api/v1/web/bets/bet", json=data
+            "https://api.d2by.com/api/v1/web/bets/bet", json=data,
+            ssl=False
         ) as resp:
             if resp.status != 200:
                 token = await create_new_token(auth_token)

@@ -17,7 +17,8 @@ from utils import update_team_name
 async def collect_d2by_v2_matches():
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            "https://api.d2by.com/api/v2/web/matchs?pageSize=1000&sort=scheduledAt&status=pre_match,live"
+            "https://api.d2by.com/api/v2/web/matchs?pageSize=1000&sort=scheduledAt&status=pre_match,live",
+            ssl=False
         ) as resp:
             response = await resp.text()
             response = json.loads(response)
@@ -55,7 +56,8 @@ async def collect_d2by_v2_matches():
 async def get_bets_of_d2by_match(match: dict):
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            f"https://api.d2by.com/api/v2/web/matchs/{match['d2by_id']}/markets"
+            f"https://api.d2by.com/api/v2/web/matchs/{match['d2by_id']}/markets",
+            ssl=False
         ) as resp:
             response = await resp.text()
             response = json.loads(response)
@@ -150,7 +152,8 @@ async def make_bet(auth_token, data):
 
     async with aiohttp.ClientSession(cookies=[auth_token], headers=headers) as session:
         async with session.post(
-            "https://api.d2by.com/api/v2/web/matchs/predicts", json=[data]
+            "https://api.d2by.com/api/v2/web/matchs/predicts", json=[data],
+            ssl=False
         ) as resp:
             response = await resp.text()
             response = json.loads(response)

@@ -27,7 +27,8 @@ from utils import (
 async def get_fan_sport_leagues(sport: int, match_type):
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            f"https://fan-sport.com/{match_type}/GetChampsZip?sport={sport}&lng=en"
+            f"https://fan-sport.com/{match_type}/GetChampsZip?sport={sport}&lng=en",
+            ssl=False
         ) as resp:
             response = await resp.text()
             leagues = json.loads(response)
@@ -37,7 +38,8 @@ async def get_fan_sport_leagues(sport: int, match_type):
 async def get_fan_sport_league_matches(league_id, match_type):
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            f"https://fan-sport.com/{match_type}/GetChampZip?lng=en&champ={league_id}"
+            f"https://fan-sport.com/{match_type}/GetChampZip?lng=en&champ={league_id}",
+            ssl=False
         ) as resp:
             response = await resp.text()
             matches = json.loads(response)
@@ -47,7 +49,8 @@ async def get_fan_sport_league_matches(league_id, match_type):
 async def get_fan_sport_match_data(sub_match_id, match_type):
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            f"https://fan-sport.com/{match_type}/GetGameZip?id={sub_match_id}&lng=en"
+            f"https://fan-sport.com/{match_type}/GetGameZip?id={sub_match_id}&lng=en",
+            ssl=False
         ) as resp:
             response = await resp.text()
             data = json.loads(response)
