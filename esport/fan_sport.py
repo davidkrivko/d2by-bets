@@ -198,102 +198,99 @@ async def compare_bets_v2(
             # 9 d2by_matches.c.team_2,
             # 10 bet_table.c.above_bets,
             for d2by_bet in d2by_bets:
-                for bet in bets:
-                    bet_model = betsModel.get(str(bet["T"]), {})
+                if d2by_bet[5] is not None or d2by_bet[6] is not None:
+                    for bet in bets:
+                        bet_model = betsModel.get(str(bet["T"]), {})
 
-                    if (
-                        bet_model["GN"] == d2by_bet[5] or bet_model["GN"] == d2by_bet[6]
-                    ) and n_map == d2by_bet[2]:
-                        value = bet.get("P", None)
-                        bet_name = get_team_name(bet_model["N"], is_reverse)
-
-                        if is_reverse:
-                            if not d2by_bet[3] and not value:
-                                add_bet_to_cfs(
-                                    cfs, d2by_bet[0], bet_name, bet["C"], fan_url
-                                )
-
-                                # if d2by_bet[4] == 18:
-                                #     if str(d2by_bet[10]) not in bet_model["GN"]:
-                                #         add_bet_to_cfs(
-                                #             cfs, d2by_bet[0], bet_name, bet["C"], fan_url
-                                #         )
-                            else:
-                                if value:
-                                    if abs(value) == d2by_bet[3]:
-                                        if "handicap" in bet_model["GN"].lower():
-                                            if (
-                                                str(d2by_bet[10]) in bet_model["N"]
-                                                and value == d2by_bet[3]
-                                            ) or (
-                                                str(d2by_bet[10]) not in bet_model["N"]
-                                                and value == d2by_bet[3] * -1
-                                            ):
-                                                add_bet_to_cfs(
-                                                    cfs,
-                                                    d2by_bet[0],
-                                                    bet_name,
-                                                    bet["C"],
-                                                    fan_url,
-                                                )
-                                        elif "total" in bet_model["GN"].lower():
-                                            continue
-                                        else:
-                                            add_bet_to_cfs(
-                                                cfs,
-                                                d2by_bet[0],
-                                                bet_name,
-                                                bet["C"],
-                                                fan_url,
-                                            )
-                        else:
-                            if not d2by_bet[3] and not value:
-                                add_bet_to_cfs(
-                                    cfs, d2by_bet[0], bet_name, bet["C"], fan_url
-                                )
-
-                                # if d2by_bet[4] == 18:
-                                #     if str(d2by_bet[10]) in bet_model["GN"]:
-                                #         add_bet_to_cfs(
-                                #             cfs, d2by_bet[0], bet_name, bet["C"], fan_url
-                                #         )
-                            else:
-                                if value:
-                                    if abs(value) == d2by_bet[3]:
-                                        if "handicap" in bet_model["GN"].lower():
-                                            if (
-                                                str(d2by_bet[10]) in bet_model["N"]
-                                                and value == d2by_bet[3] * -1
-                                            ) or (
-                                                str(d2by_bet[10]) not in bet_model["N"]
-                                                and value == d2by_bet[3]
-                                            ):
-                                                add_bet_to_cfs(
-                                                    cfs,
-                                                    d2by_bet[0],
-                                                    bet_name,
-                                                    bet["C"],
-                                                    fan_url,
-                                                )
-                                        elif "total" in bet_model["GN"].lower():
-                                            continue
-                                        else:
-                                            add_bet_to_cfs(
-                                                cfs,
-                                                d2by_bet[0],
-                                                bet_name,
-                                                bet["C"],
-                                                fan_url,
-                                            )
                         if (
-                            "total" in bet_model["GN"].lower()
-                            and "handicap" not in bet_model["GN"].lower()
-                        ):
-                            if value == d2by_bet[3]:
-                                bet_name = "Over" if "Over" in bet_name else "Under"
-                                add_bet_to_cfs(
-                                    cfs, d2by_bet[0], bet_name, bet["C"], fan_url
-                                )
+                            bet_model["GN"] == d2by_bet[5] or bet_model["GN"] == d2by_bet[6]
+                        ) and n_map == d2by_bet[2]:
+                            value = bet.get("P", None)
+                            bet_name = get_team_name(bet_model["N"], is_reverse)
+
+                            if is_reverse:
+                                if not d2by_bet[3] and not value:
+                                    add_bet_to_cfs(
+                                        cfs, d2by_bet[0], bet_name, bet["C"], fan_url
+                                    )
+
+                                    # if d2by_bet[4] == 18:
+                                    #     if str(d2by_bet[10]) not in bet_model["GN"]:
+                                    #         add_bet_to_cfs(
+                                    #             cfs, d2by_bet[0], bet_name, bet["C"], fan_url
+                                    #         )
+                                else:
+                                    if value:
+                                        if abs(value) == d2by_bet[3]:
+                                            if "handicap" in bet_model["GN"].lower():
+                                                if (
+                                                    str(d2by_bet[10]) in bet_model["N"]
+                                                    and value == d2by_bet[3]
+                                                ) or (
+                                                    str(d2by_bet[10]) not in bet_model["N"]
+                                                    and value == d2by_bet[3] * -1
+                                                ):
+                                                    add_bet_to_cfs(
+                                                        cfs,
+                                                        d2by_bet[0],
+                                                        bet_name,
+                                                        bet["C"],
+                                                        fan_url,
+                                                    )
+                                            elif "total" not in bet_model["GN"].lower():
+                                                add_bet_to_cfs(
+                                                    cfs,
+                                                    d2by_bet[0],
+                                                    bet_name,
+                                                    bet["C"],
+                                                    fan_url,
+                                                )
+                            else:
+                                if not d2by_bet[3] and not value:
+                                    add_bet_to_cfs(
+                                        cfs, d2by_bet[0], bet_name, bet["C"], fan_url
+                                    )
+
+                                    # if d2by_bet[4] == 18:
+                                    #     if str(d2by_bet[10]) in bet_model["GN"]:
+                                    #         add_bet_to_cfs(
+                                    #             cfs, d2by_bet[0], bet_name, bet["C"], fan_url
+                                    #         )
+                                else:
+                                    if value:
+                                        if abs(value) == d2by_bet[3]:
+                                            if "handicap" in bet_model["GN"].lower():
+                                                if (
+                                                    str(d2by_bet[10]) in bet_model["N"]
+                                                    and value == d2by_bet[3] * -1
+                                                ) or (
+                                                    str(d2by_bet[10]) not in bet_model["N"]
+                                                    and value == d2by_bet[3]
+                                                ):
+                                                    add_bet_to_cfs(
+                                                        cfs,
+                                                        d2by_bet[0],
+                                                        bet_name,
+                                                        bet["C"],
+                                                        fan_url,
+                                                    )
+                                            elif "total" not in bet_model["GN"].lower():
+                                                add_bet_to_cfs(
+                                                    cfs,
+                                                    d2by_bet[0],
+                                                    bet_name,
+                                                    bet["C"],
+                                                    fan_url,
+                                                )
+                            if (
+                                "total" in bet_model["GN"].lower()
+                                and "handicap" not in bet_model["GN"].lower()
+                            ):
+                                if value == d2by_bet[3]:
+                                    bet_name = "Over" if "Over" in bet_name else "Under"
+                                    add_bet_to_cfs(
+                                        cfs, d2by_bet[0], bet_name, bet["C"], fan_url
+                                    )
 
             tasks = [update_bet_v2(cf) for cf in cfs.values()]
             await asyncio.gather(*tasks)
