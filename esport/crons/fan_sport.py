@@ -20,17 +20,16 @@ from esport.fan_sport import (
 
 
 async def collect_fan_sport_matches():
-    matches = await get_d2by_line_matches()
+    matches = await get_d2by_line_matches(is_all=True)
     matches += await get_d2by_live_matches()
 
-    await get_d2by_line_matches()
     leags = await collect_fan_sport_leagues(40, "LineFeed")
 
     tasks = [
         collect_fan_sport_league_matches_v2(leag, 40, matches, "LineFeed") for leag in leags
     ]
 
-    await asyncio.gather(*tasks)
-
+    mats = await asyncio.gather(*tasks)
+    return mats
 
 asyncio.run(collect_fan_sport_matches())

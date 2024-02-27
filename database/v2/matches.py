@@ -102,7 +102,7 @@ async def get_d2by_live_matches():
         return df.to_dict(orient="records")
 
 
-async def get_d2by_line_matches():
+async def get_d2by_line_matches(is_all: bool = False):
     query_cols = [
         d2by_matches.c.id,
         d2by_matches.c.team_1,
@@ -126,16 +126,25 @@ async def get_d2by_line_matches():
     three_hours_more = func.now() + text("INTERVAL '3 hours'")
 
     async with async_session() as session:
-        select_query = (
-            select(*query_cols)
-            .select_from(d2by_matches)
-            .where(
-                and_(
+        if is_all:
+            select_query = (
+                select(*query_cols)
+                .select_from(d2by_matches)
+                .where(
                     d2by_matches.c.start_time > fifteen_minutes_ago,
-                    d2by_matches.c.start_time < three_hours_more
                 )
             )
-        )
+        else:
+            select_query = (
+                select(*query_cols)
+                .select_from(d2by_matches)
+                .where(
+                    and_(
+                        d2by_matches.c.start_time > fifteen_minutes_ago,
+                        d2by_matches.c.start_time < three_hours_more
+                    )
+                )
+            )
 
         try:
             result_set = await session.execute(select_query)
@@ -186,7 +195,7 @@ async def get_fan_sport_live_matches():
         return df.to_dict(orient="records")
 
 
-async def get_fan_sport_line_matches():
+async def get_fan_sport_line_matches(is_all: bool = False):
     query_cols = [
         fan_sport_matches.c.id,
         fan_sport_matches.c.team_1,
@@ -205,13 +214,28 @@ async def get_fan_sport_line_matches():
     ]
 
     fifteen_minutes_ago = func.now() - text("INTERVAL '15 minutes'")
+    three_hours_more = func.now() + text("INTERVAL '3 hours'")
 
     async with async_session() as session:
-        select_query = (
-            select(*query_cols)
-            .select_from(fan_sport_matches)
-            .where(fan_sport_matches.c.start_time > fifteen_minutes_ago)
-        )
+        if is_all:
+            select_query = (
+                select(*query_cols)
+                .select_from(fan_sport_matches)
+                .where(
+                    d2by_matches.c.start_time > fifteen_minutes_ago,
+                )
+            )
+        else:
+            select_query = (
+                select(*query_cols)
+                .select_from(fan_sport_matches)
+                .where(
+                    and_(
+                        d2by_matches.c.start_time > fifteen_minutes_ago,
+                        d2by_matches.c.start_time < three_hours_more
+                    )
+                )
+            )
 
         try:
             result_set = await session.execute(select_query)

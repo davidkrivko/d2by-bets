@@ -15,7 +15,7 @@ from config import (
 
 
 DB_STRING = f"postgresql+asyncpg://{DB2_USER}:{DB2_PASSWORD}@{DB2_HOST}:{DB2_PORT}/{DB2_NAME}"
-db_2 = create_async_engine(DB_STRING, pool_size=10, max_overflow=20)
+db_2 = create_async_engine(DB_STRING, pool_size=20, max_overflow=40)
 meta_2 = MetaData()
 
 async_session_2 = async_sessionmaker(
