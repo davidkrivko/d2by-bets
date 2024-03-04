@@ -6,6 +6,7 @@ import json
 import aiohttp
 
 from betsModel import betsModel
+from config import FAN_SPORT_DELTA
 
 from database.v1.bets import (
     get_bets_of_match,
@@ -99,7 +100,7 @@ async def collect_fan_sport_league_matches(
                 "id": match[match_key],
                 "team_1": update_team_name(match["O1"]),
                 "team_2": update_team_name(match["O2"]),
-                "start_time": datetime.datetime.fromtimestamp(match["S"]),
+                "start_time": datetime.datetime.fromtimestamp(match["S"]) + datetime.timedelta(hours=FAN_SPORT_DELTA),
                 "d2by_id": mat["id"],
                 "fan_ids": ",".join([str(sub[match_key]) for sub in match.get("SG", [])] + [str(match[match_key])])
                 if match.get("SG", False)
@@ -120,7 +121,7 @@ async def collect_fan_sport_league_matches(
             )
             and (
                 (mat["start_time"] - datetime.timedelta(minutes=30))
-                <= datetime.datetime.fromtimestamp(match["S"])
+                <= datetime.datetime.fromtimestamp(match["S"]) + datetime.timedelta(hours=FAN_SPORT_DELTA)
                 <= (mat["start_time"] + datetime.timedelta(minutes=30))
             )
         ]
