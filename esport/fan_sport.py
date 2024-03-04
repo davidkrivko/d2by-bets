@@ -125,7 +125,7 @@ async def collect_fan_sport_league_matches_v2(
             )
             and (
                 (mat["start_time"] - datetime.timedelta(minutes=30))
-                <= datetime.datetime.fromtimestamp(match["S"])
+                <= datetime.datetime.fromtimestamp(match["S"]) + datetime.timedelta(hours=FAN_SPORT_DELTA)
                 <= (mat["start_time"] + datetime.timedelta(minutes=30))
             )
         ]
