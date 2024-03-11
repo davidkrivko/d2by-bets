@@ -61,7 +61,7 @@ async def v2_script(time: str, token):
 
                     data = {
                         "amount": 1,
-                        "coinType": "GEM",
+                        "coinType": "GOLD",
                         "market": bet[14],
                         "type": "SINGLE",
                         "currentRate": prob["prob"],
