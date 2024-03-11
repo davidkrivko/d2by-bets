@@ -22,10 +22,10 @@ async def update_all_bets():
 
         tasks = [
             v1_script(),
-            v2_script("live", AUTH_TOKEN),
+            v2_script("LiveFeed", AUTH_TOKEN),
         ]
         if i == 30:
-            tasks.append(v2_script("line", AUTH_TOKEN))
+            tasks.append(v2_script("LineFeed", AUTH_TOKEN))
             i = 0
 
         await asyncio.gather(*tasks)

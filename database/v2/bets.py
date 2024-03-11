@@ -136,7 +136,7 @@ async def update_bet(data: dict):
 
 
 async def get_all_active_bets():
-    two_hours_from_now = datetime.now() + timedelta(hours=2)
+    two_hours_from_now = datetime.now() + timedelta(hours=3)
 
     async with async_session() as session:
         select_query = (

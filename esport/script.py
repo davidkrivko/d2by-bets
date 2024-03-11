@@ -27,7 +27,7 @@ def query_compare_bet_cfs_v2(d2by_bets, fan_bets):
 
 
 async def v2_script(time: str, token):
-    if time == "live":
+    if time == "LiveFeed":
         matches = await get_d2by_live_matches()
         mats = await get_fan_sport_live_matches()
     else:
@@ -40,7 +40,7 @@ async def v2_script(time: str, token):
     tasks = []
     for mat in mats:
         tasks.extend([
-            compare_bets_v2(sub_mat, mat["d2by_id"], "LineFeed", 40)
+            compare_bets_v2(sub_mat, mat["d2by_id"], time, 40)
             for sub_mat in mat["fan_ids"].split(",")
         ])
 
