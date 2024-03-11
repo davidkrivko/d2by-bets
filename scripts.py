@@ -24,7 +24,7 @@ async def update_all_bets():
             v1_script(),
             v2_script("live", AUTH_TOKEN),
         ]
-        if i == 70:
+        if i == 30:
             tasks.append(v2_script("line", AUTH_TOKEN))
             i = 0
 

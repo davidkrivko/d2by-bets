@@ -2,6 +2,7 @@ import pandas as pd
 from sqlalchemy import Table, text, select, func, and_
 from sqlalchemy.exc import TimeoutError as SQLTimeoutError
 
+from config import D2BY_TIME_DELTA
 from database.v2.connection import async_session_2 as async_session
 from database.v2.tables import d2by_matches, fan_sport_matches
 
@@ -82,7 +83,7 @@ async def get_d2by_live_matches():
         "d2by_id",
     ]
 
-    fifteen_minutes_ago = func.now() - text("INTERVAL '15 minutes'")
+    fifteen_minutes_ago = func.now() + text("INTERVAL '5 minutes'") + text(f"INTERVAL '{D2BY_TIME_DELTA} hours'")
 
     async with async_session() as session:
         select_query = (
@@ -122,8 +123,8 @@ async def get_d2by_line_matches(is_all: bool = False):
         "d2by_id",
     ]
 
-    fifteen_minutes_ago = func.now() - text("INTERVAL '15 minutes'")
-    three_hours_more = func.now() + text("INTERVAL '3 hours'")
+    fifteen_minutes_ago = func.now() + text(f"INTERVAL '{D2BY_TIME_DELTA} hours'")
+    three_hours_more = func.now() + text("INTERVAL '3 hours'") + text(f"INTERVAL '{D2BY_TIME_DELTA} hours'")
 
     async with async_session() as session:
         if is_all:
@@ -175,7 +176,7 @@ async def get_fan_sport_live_matches():
         "d2by_id",
     ]
 
-    fifteen_minutes_ago = func.now() - text("INTERVAL '15 minutes'")
+    fifteen_minutes_ago = func.now() + text("INTERVAL '5 minutes'") + text(f"INTERVAL '{D2BY_TIME_DELTA} hours'")
 
     async with async_session() as session:
         select_query = (
@@ -213,8 +214,8 @@ async def get_fan_sport_line_matches(is_all: bool = False):
         "d2by_id",
     ]
 
-    fifteen_minutes_ago = func.now() - text("INTERVAL '15 minutes'")
-    three_hours_more = func.now() + text("INTERVAL '3 hours'")
+    fifteen_minutes_ago = func.now() + text(f"INTERVAL '{D2BY_TIME_DELTA} hours'")
+    three_hours_more = func.now() + text("INTERVAL '3 hours'") + text(f"INTERVAL '{D2BY_TIME_DELTA} hours'")
 
     async with async_session() as session:
         if is_all:
@@ -222,7 +223,7 @@ async def get_fan_sport_line_matches(is_all: bool = False):
                 select(*query_cols)
                 .select_from(fan_sport_matches)
                 .where(
-                    d2by_matches.c.start_time > fifteen_minutes_ago,
+                    fan_sport_matches.c.start_time > fifteen_minutes_ago,
                 )
             )
         else:
@@ -231,8 +232,8 @@ async def get_fan_sport_line_matches(is_all: bool = False):
                 .select_from(fan_sport_matches)
                 .where(
                     and_(
-                        d2by_matches.c.start_time > fifteen_minutes_ago,
-                        d2by_matches.c.start_time < three_hours_more
+                        fan_sport_matches.c.start_time > fifteen_minutes_ago,
+                        fan_sport_matches.c.start_time < three_hours_more
                     )
                 )
             )
