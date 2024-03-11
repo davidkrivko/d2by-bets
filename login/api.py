@@ -3,17 +3,14 @@ import logging
 import os
 from telnetlib import EC
 
-from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+from config import USERNAME, PASSWORD
 from login.emails import get_verification_code
-
-
-load_dotenv()
 
 
 CHROME_OPTIONS = webdriver.ChromeOptions()
@@ -39,12 +36,24 @@ def get_token(username, password, gmail_client):
         )
     )
 
+    wait = WebDriverWait(driver, 10)
+    wait.until(
+        EC.presence_of_element_located(
+            (By.CSS_SELECTOR, ".bg-orange-ff9910.rounded.text-white.py-1.px-6.text-sm.cursor-pointer.font-arial")
+        )
+    )
     login_button = driver.find_element(
         By.CSS_SELECTOR,
         ".bg-orange-ff9910.rounded.text-white.py-1.px-6.text-sm.cursor-pointer.font-arial",
     )
     login_button.click()
 
+    wait = WebDriverWait(driver, 10)
+    wait.until(
+        EC.presence_of_element_located(
+            (By.NAME, "email")
+        )
+    )
     email_input = driver.find_element(By.NAME, "email")
     password_input = driver.find_element(By.NAME, "password")
 
@@ -59,6 +68,12 @@ def get_token(username, password, gmail_client):
 
     ver_code = get_verification_code(time, gmail_client)
 
+    wait = WebDriverWait(driver, 20)
+    wait.until(
+        EC.presence_of_element_located(
+            (By.NAME, "verifyCode")
+        )
+    )
     code_input = driver.find_element(By.NAME, "verifyCode")
     code_input.send_keys(ver_code)
 
@@ -78,3 +93,11 @@ def get_token(username, password, gmail_client):
     for ck in cookies:
         if ck["name"] == "_cus_token":
             return {"name": ck["name"], "value": ck["value"]}
+
+
+async def create_new_token(gmail_client):
+    new_token = get_token(username=USERNAME, password=PASSWORD, gmail_client=gmail_client)
+    global AUTH_TOKEN
+    AUTH_TOKEN = new_token
+
+    return AUTH_TOKEN

@@ -12,7 +12,8 @@ from database.v1.bets import (
 from database.v1.matches import add_match_to_db
 
 from database.v1.tables import d2by_matches
-from utils import update_team_name, create_new_token
+from utils import update_team_name
+from login.api import create_new_token
 
 
 async def collect_d2by_sport_matches():

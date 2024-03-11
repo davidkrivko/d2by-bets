@@ -3,7 +3,6 @@ import aiohttp
 
 from config import TELEGRAM_BOT, CHAT_ID, SENDING_MESSAGES_DELTA
 from database.v1.bets import update_is_shown_field
-from sport.api import make_bet
 
 
 async def send_telegram_message(message):

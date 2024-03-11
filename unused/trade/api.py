@@ -2,7 +2,7 @@ import json
 
 import aiohttp
 
-from utils import create_new_token
+from login.api import create_new_token
 
 
 async def get_trade_items(auth_token):

@@ -2,8 +2,7 @@ import re
 
 from fuzzywuzzy import fuzz
 
-from config import WORD_BLACK_LIST, THRESHOLD, USERNAME, PASSWORD
-from login.api import get_token
+from config import WORD_BLACK_LIST, THRESHOLD
 
 
 def update_team_name(team: str):
