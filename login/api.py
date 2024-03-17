@@ -1,6 +1,8 @@
 import datetime
 import logging
 import os
+import json
+import aiohttp
 from telnetlib import EC
 
 from selenium import webdriver
@@ -11,6 +13,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from config import USERNAME, PASSWORD
 from login.emails import get_verification_code
+
+from config import DEFAULT_D2BY_HEADERS
+from telegram import send_telegram_message_v2
 
 
 CHROME_OPTIONS = webdriver.ChromeOptions()
@@ -101,3 +106,25 @@ async def create_new_token(gmail_client):
     AUTH_TOKEN = new_token
 
     return AUTH_TOKEN
+
+
+async def get_balance(auth_token):
+    headers = DEFAULT_D2BY_HEADERS
+    headers["Authorization"] = f"Bearer {auth_token['value']}"
+
+    async with aiohttp.ClientSession(cookies=[auth_token], headers=headers) as session:
+        async with session.get(
+            "https://api.d2by.com/api/v1/web/user/profile",
+            ssl=False
+        ) as resp:
+            response = await resp.text()
+            response = json.loads(response)
+
+            if response["meta"]["status"] == 200:
+                gold = round(response["data"]["coin"]["gold"], 2)
+                gem = round(response["data"]["coin"]["gem"], 2)
+                diamond = round(response["data"]["coin"]["diamond"], 2)
+
+                message = f"GOLD: {gold}\nDIAMOND: {diamond}\nGEM: {gem}"
+
+                await send_telegram_message_v2(message)

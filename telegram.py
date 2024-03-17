@@ -5,12 +5,22 @@ from config import TELEGRAM_BOT, CHAT_ID, SENDING_MESSAGES_DELTA
 from database.v1.bets import update_is_shown_field
 
 
+async def send_telegram_message_v2(message):
+    telegram_url = f"https://api.telegram.org/{TELEGRAM_BOT}/sendMessage"
+    data = {"chat_id": CHAT_ID, "text": message}
+
+    async with aiohttp.ClientSession() as session:
+        async with session.post(telegram_url, data=data, ssl=False) as response:
+            t = await response.text()
+            return t
+
+
 async def send_telegram_message(message):
     telegram_url = f"https://api.telegram.org/{TELEGRAM_BOT}/sendMessage"
     data = {"chat_id": CHAT_ID, "text": message, "parse_mode": "MarkdownV2"}
 
     async with aiohttp.ClientSession() as session:
-        async with session.post(telegram_url, data=data) as response:
+        async with session.post(telegram_url, data=data, ssl=False) as response:
             t = await response.text()
             return t
 

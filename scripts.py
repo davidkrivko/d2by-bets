@@ -5,7 +5,7 @@ import logging
 from simplegmail import Gmail
 
 from config import USERNAME, PASSWORD
-from login.api import get_token
+from login.api import get_token, get_balance
 
 from esport.script import v2_script
 from sport.script import v1_script
@@ -22,10 +22,12 @@ async def update_all_bets():
 
         tasks = [
             v1_script(),
-            v2_script("LiveFeed", AUTH_TOKEN),
+            v2_script("LineFeed", AUTH_TOKEN)
+            # v2_script("LiveFeed", AUTH_TOKEN),
         ]
+
         if i == 30:
-            tasks.append(v2_script("LineFeed", AUTH_TOKEN))
+            tasks.append(get_balance(AUTH_TOKEN))
             i = 0
 
         await asyncio.gather(*tasks)

@@ -1,4 +1,5 @@
 import datetime
+import requests
 
 from simplegmail.query import construct_query
 from bs4 import BeautifulSoup
@@ -6,7 +7,7 @@ from bs4 import BeautifulSoup
 from config import TELEGRAM_BOT, CHAT_ID
 
 
-def send_telegram_message_sync(message, requests=None):
+def send_telegram_message_sync(message):
     telegram_url = f"https://api.telegram.org/{TELEGRAM_BOT}/sendMessage"
     data = {"chat_id": CHAT_ID, "text": message}
 
