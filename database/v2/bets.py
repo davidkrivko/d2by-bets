@@ -1,7 +1,6 @@
-from datetime import datetime, timedelta
+from sqlalchemy import and_, select, text, func
 
-from sqlalchemy import and_, select
-
+from config import D2BY_TIME_DELTA
 from database.v2.connection import async_session_2 as async_session
 from sqlalchemy.exc import TimeoutError as SQLTimeoutError
 
@@ -136,7 +135,7 @@ async def update_bet(data: dict):
 
 
 async def get_all_active_bets():
-    two_hours_from_now = datetime.now() + timedelta(hours=3)
+    two_hours_from_now = func.now() + text("INTERVAL '3 hours'") + text(f"INTERVAL '{D2BY_TIME_DELTA} hours'")
 
     async with async_session() as session:
         select_query = (
