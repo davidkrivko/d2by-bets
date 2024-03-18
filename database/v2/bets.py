@@ -166,7 +166,7 @@ async def get_all_active_bets():
                 ).join(d2by_matches, bets_table.c.match_id == d2by_matches.c.id)
             )
             .where(
-                (bets_table.c.fan_bets != {})
+                (bets_table.c.fan_url != None)
                 & (bets_table.c.isActive == True)
                 & (bets_table.c.is_shown == False)
                 & (d2by_matches.c.start_time < two_hours_from_now)

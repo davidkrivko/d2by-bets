@@ -152,6 +152,8 @@ async def get_d2by_line_matches(is_all: bool = False):
             res = result_set.fetchall()
         except SQLTimeoutError:
             return []
+        except Exception as e:
+            pass
 
         df = pd.DataFrame(columns=cols, data=res)
 

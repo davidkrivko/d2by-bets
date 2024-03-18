@@ -1,5 +1,7 @@
+import asyncio
 import json
 
+import aiohttp
 import requests
 from bs4 import BeautifulSoup
 

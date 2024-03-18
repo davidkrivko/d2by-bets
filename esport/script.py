@@ -28,16 +28,13 @@ def query_compare_bet_cfs_v2(d2by_bets, fan_bets):
 
 async def v2_script(time: str, token):
     if time == "LiveFeed":
-        matches = await get_d2by_live_matches()
-        mats = await get_fan_sport_live_matches()
+        matches, mats = await asyncio.gather(*[get_d2by_live_matches(), get_fan_sport_live_matches()])
     else:
-        matches = await get_d2by_line_matches(is_all=IS_ALL_MATCHES)
-        mats = await get_fan_sport_line_matches(is_all=IS_ALL_MATCHES)
+        matches, mats = await asyncio.gather(*[get_d2by_line_matches(is_all=IS_ALL_MATCHES), get_fan_sport_line_matches(is_all=IS_ALL_MATCHES)])
+        # matches = await get_d2by_line_matches(is_all=IS_ALL_MATCHES)
+        # mats = await get_fan_sport_line_matches(is_all=IS_ALL_MATCHES)
 
     tasks = [get_bets_of_d2by_match(match) for match in matches]
-    await asyncio.gather(*tasks)
-
-    tasks = []
     for mat in mats:
         tasks.extend([
             compare_bets_v2(sub_mat, mat["d2by_id"], time, 40)
