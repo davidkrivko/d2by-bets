@@ -26,10 +26,6 @@ async def update_all_bets():
             # v2_script("LiveFeed", AUTH_TOKEN),
         ]
 
-        if i == 30:
-            tasks.append(get_balance(AUTH_TOKEN))
-            i = 0
-
         await asyncio.gather(*tasks)
 
         i += 1
