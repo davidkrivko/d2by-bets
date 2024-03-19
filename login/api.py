@@ -72,6 +72,8 @@ def get_token(username, password, gmail_client):
     login_button.click()
 
     ver_code = get_verification_code(time, gmail_client)
+    if ver_code is None:
+        return get_token(username, password, gmail_client)
 
     wait = WebDriverWait(driver, 20)
     wait.until(

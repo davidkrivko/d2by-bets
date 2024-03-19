@@ -41,7 +41,7 @@ def get_verification_code(time, gmail_client):
 
         if i == 10:
             send_telegram_message_sync("Email is not coming!")
-            return get_verification_code(time, gmail_client)
+            return None
 
     html = message.html
     soup = BeautifulSoup(html, "html.parser")
